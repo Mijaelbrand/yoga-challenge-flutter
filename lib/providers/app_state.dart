@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../models/yoga_message.dart';
 import '../utils/constants.dart';
 
@@ -157,16 +159,22 @@ class AppState extends ChangeNotifier {
   
   // Get today's message
   YogaMessage? getTodaysMessage() {
+    if (_userScheduledMessages.isEmpty) return null;
+    
     final today = DateTime.now();
     final todayStr = "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
     
-    return _userScheduledMessages.firstWhere(
-      (message) {
-        final messageDate = "${message.scheduledDate.year}-${message.scheduledDate.month.toString().padLeft(2, '0')}-${message.scheduledDate.day.toString().padLeft(2, '0')}";
-        return messageDate == todayStr;
-      },
-      orElse: () => _userScheduledMessages.first,
-    );
+    try {
+      return _userScheduledMessages.firstWhere(
+        (message) {
+          final messageDate = "${message.scheduledDate.year}-${message.scheduledDate.month.toString().padLeft(2, '0')}-${message.scheduledDate.day.toString().padLeft(2, '0')}";
+          return messageDate == todayStr;
+        },
+        orElse: () => _userScheduledMessages.first,
+      );
+    } catch (e) {
+      return null;
+    }
   }
   
   // Get next message
@@ -281,6 +289,82 @@ class AppState extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error saving user data: $e');
     }
+  }
+  
+  // Generate user messages based on selected schedule
+  Future<void> generateUserMessages() async {
+    try {
+      _userScheduledMessages.clear();
+      
+      if (_selectedSchedule.isEmpty || _challengeStartDate == null) {
+        debugPrint('Cannot generate messages: schedule or start date missing');
+        return;
+      }
+      
+      // Load yoga messages from JSON
+      final String jsonString = await rootBundle.loadString('assets/data/yoga_messages.json');
+      final Map<String, dynamic> jsonData = json.decode(jsonString);
+      final Map<String, dynamic> messagesData = jsonData['messages'];
+      
+      // Calculate schedule for 31 days
+      final List<YogaMessage> scheduledMessages = [];
+      final startDate = _challengeStartDate!;
+      int messageIndex = 1;
+      
+      for (int day = 0; day < 31 && messageIndex <= messagesData.length; day++) {
+        final currentDate = startDate.add(Duration(days: day));
+        final dayOfWeek = currentDate.weekday % 7; // Convert to 0-6 format
+        
+        // Check if this day is in the user's schedule
+        final dayShort = _getDayShortFromWeekday(dayOfWeek);
+        if (_selectedSchedule.containsKey(dayShort)) {
+          final timeString = _selectedSchedule[dayShort]!;
+          final timeParts = timeString.split(':');
+          final hour = int.parse(timeParts[0]);
+          final minute = int.parse(timeParts[1]);
+          
+          final scheduledDateTime = DateTime(
+            currentDate.year,
+            currentDate.month,
+            currentDate.day,
+            hour,
+            minute,
+          );
+          
+          // Get message data
+          final messageData = messagesData[messageIndex.toString()];
+          if (messageData != null) {
+            final yogaMessage = YogaMessage(
+              messageNumber: messageIndex,
+              notificationTitle: messageData['notification_title'] ?? 'Yoga Challenge',
+              notificationText: messageData['notification_text'] ?? 'Tu práctica te espera',
+              fullMessage: messageData['full_message'] ?? 'Mensaje del día $messageIndex',
+              videoUrl: messageData['video_url'] ?? 'day$messageIndex',
+              videoButtonText: messageData['video_button_text'] ?? 'Ver video',
+              scheduledDate: scheduledDateTime,
+            );
+            
+            scheduledMessages.add(yogaMessage);
+            messageIndex++;
+          }
+        }
+      }
+      
+      _userScheduledMessages = scheduledMessages;
+      await _saveUserData();
+      notifyListeners();
+      
+      debugPrint('Generated ${_userScheduledMessages.length} messages for user schedule');
+      
+    } catch (e) {
+      debugPrint('Error generating user messages: $e');
+    }
+  }
+  
+  // Helper method to convert weekday to short day name
+  String _getDayShortFromWeekday(int weekday) {
+    const dayShorts = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    return dayShorts[weekday];
   }
 }
 

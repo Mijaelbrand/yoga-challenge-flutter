@@ -97,33 +97,45 @@ class _IntroVideoScreenState extends State<IntroVideoScreen> {
               ),
             ),
           
-          // Finished button overlay
+          // Instructions and button at the top
           Positioned(
-            bottom: 40,
+            top: 20,
             left: 20,
             right: 20,
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withOpacity(0.8),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 children: [
                   Text(
-                    '¿Terminaste de ver el video?',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    'Dale play!',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Colors.white,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   
+                  Text(
+                    'Si todavía no has visto el video de introducción, es importante que lo hagas... dura un minuto, literalmente.',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.white70,
+                      height: 1.4,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Smaller continue button
                   SizedBox(
-                    width: double.infinity,
-                    height: 48,
+                    width: 200, // Smaller width
+                    height: 40, // Smaller height
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pushReplacement(
@@ -136,12 +148,13 @@ class _IntroVideoScreenState extends State<IntroVideoScreen> {
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(20), // More rounded
                         ),
+                        elevation: 4,
                       ),
                       child: Text(
-                        AppStrings.finishedButton,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        'Ya vi el video, continuar',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),

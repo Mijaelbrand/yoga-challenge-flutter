@@ -316,7 +316,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     onTimeSelected(picked);
   }
 
-  void _confirmSchedule() {
+  Future<void> _confirmSchedule() async {
     if (_selectedSchedule.length < AppConfig.minPracticeDays) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -342,6 +342,9 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     appState.setSelectedSchedule(_selectedSchedule);
     appState.setChallengeStartDate(DateTime.now());
     appState.setIntroCompleted(true);
+    
+    // Generate user messages for the selected schedule
+    await appState.generateUserMessages();
     
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(

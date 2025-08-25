@@ -31,20 +31,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text(AppStrings.dashboardTitle),
-        backgroundColor: AppColors.primary,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              // TODO: Show settings dialog
-            },
-          ),
-        ],
-      ),
-      body: Consumer<AppState>(
+      body: SafeArea(
+        child: Consumer<AppState>(
         builder: (context, appState, child) {
           final todaysMessage = appState.getTodaysMessage();
           final nextMessage = appState.getNextMessage();
@@ -86,6 +74,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           );
         },
+        ),
       ),
     );
   }

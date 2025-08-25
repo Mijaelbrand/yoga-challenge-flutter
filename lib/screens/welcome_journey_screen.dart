@@ -16,23 +16,6 @@ class WelcomeJourneyScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 60),
               
-              // Celebration Icon
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(60),
-                ),
-                child: Icon(
-                  Icons.celebration,
-                  size: 60,
-                  color: AppColors.primary,
-                ),
-              ),
-              
-              const SizedBox(height: 40),
-              
               // Title
               Text(
                 AppStrings.journeyTitle,

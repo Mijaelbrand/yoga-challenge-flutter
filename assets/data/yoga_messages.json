@@ -309,8 +309,8 @@
     }
   },
   "_metadata": {
-    "version": "1.1.4",
+    "version": "1.1.5",
     "updated": "2025-08-25",
-    "note": "JSON parsing fixed for BrowserStack iOS compatibility"
+    "note": "UI improvements and blank screen fixes for iOS"
   }
 }
