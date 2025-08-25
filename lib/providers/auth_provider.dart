@@ -141,24 +141,40 @@ class AuthProvider extends ChangeNotifier {
       );
       
       // Provide more specific error message based on error type
-      String userError = 'Error de conexión: ';
+      String userError = 'Error de conexión:\n';
+      String debugInfo = '';
+      
       if (e is DioException) {
+        debugInfo = '\n\n[DEBUG INFO]\n';
+        debugInfo += 'Type: ${e.type}\n';
+        debugInfo += 'URL: ${e.requestOptions.uri}\n';
+        debugInfo += 'Error: ${e.error}\n';
+        
         switch (e.type) {
           case DioExceptionType.connectionTimeout:
           case DioExceptionType.connectionError:
             userError += 'No se pudo conectar al servidor. Verifica tu conexión a internet.';
+            debugInfo += 'CONNECTION FAILED - Check iOS network settings';
             break;
           case DioExceptionType.receiveTimeout:
             userError += 'El servidor no respondió a tiempo. Inténtalo más tarde.';
+            debugInfo += 'TIMEOUT - Server not responding';
+            break;
+          case DioExceptionType.badCertificate:
+            userError += 'Error de certificado SSL.';
+            debugInfo += 'SSL/TLS ERROR - Certificate issue';
             break;
           default:
             userError += e.message ?? 'Error desconocido';
+            debugInfo += 'Unknown error type';
         }
       } else {
         userError += e.toString();
+        debugInfo = '\n\n[DEBUG]\n$e';
       }
       
-      setError(userError);
+      // Include debug info in the error message for visibility
+      setError(userError + debugInfo);
       return error;
     } finally {
       setLoading(false);
