@@ -79,6 +79,9 @@ A Flutter version of the Yoga Challenge app with ManyChat integration and video 
 - Challenge duration: 31 days
 - Error messages match exactly
 - Removed Flutter-only UI elements (journey steps, quotes)
+- **Video system matches Android exactly:**
+  - Intro video: WebView in-app (Vimeo embed)
+  - Daily videos: External browser launch (tokenized URLs)
 
 ⚠️ **REQUIRES VERIFICATION:**
 - Screen layouts visual matching
@@ -88,7 +91,26 @@ A Flutter version of the Yoga Challenge app with ManyChat integration and video 
 
 ❌ **KNOWN DIFFERENCES (Platform-Specific):**
 - iOS requires different permission handling for notifications
-- iOS uses different video player implementation (but same functionality)
+
+## 🎥 Video Implementation Details
+
+**CRITICAL: Video behavior must match Android exactly:**
+
+### Intro Video (One-time only):
+- **Location**: Shown once in app after phone verification
+- **Implementation**: WebView inside the app showing Vimeo embed
+- **Video ID**: `1112594299`
+- **User Experience**: Plays directly in the app
+
+### Daily Practice Videos:
+- **Location**: Accessed from dashboard "video button" 
+- **Implementation**: Opens tokenized URLs in **EXTERNAL BROWSER**
+- **Flow**: App → Get token → Build URL → Launch default browser
+- **User Experience**: Leaves app, opens Chrome/Safari with your Divi pages
+- **URLs**: `https://akilainstitute.com/watch/video.php?video=day1&token=ABC&phone=123`
+- **Validation**: Token validates → redirects to Divi pages with actual video
+
+**NEVER open daily videos inside the app - they must open in external browser like Android**
 
 ---
 

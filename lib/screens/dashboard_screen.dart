@@ -6,7 +6,7 @@ import '../providers/app_state.dart';
 import '../providers/auth_provider.dart';
 import '../utils/constants.dart';
 import '../models/yoga_message.dart';
-import 'hybrid_video_screen.dart';
+// Removed HybridVideoScreen - daily videos open in external browser like Android
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -435,19 +435,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       final token = await authProvider.getVideoToken(phoneNumber);
       
       if (token != null && token.isNotEmpty) {
-        debugPrint('Opening hybrid URL for video: $videoId');
+        // Build hybrid URL exactly like Android
+        final hybridUrl = authProvider.buildHybridVideoUrl(videoId, token, phoneNumber);
+        debugPrint('Opening hybrid URL: $hybridUrl');
         
-        // Navigate to hybrid video screen with WebView - matches Android VideoPlayerActivity
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => HybridVideoScreen(
-              videoId: videoId,
-              title: title,
-              phoneNumber: phoneNumber,
-              token: token,
-            ),
-          ),
-        );
+        // Launch in external browser - matches Android Intent.ACTION_VIEW exactly
+        await launchUrl(Uri.parse(hybridUrl), mode: LaunchMode.externalApplication);
       } else {
         // Fallback: show access error - matches Android
         ScaffoldMessenger.of(context).showSnackBar(
