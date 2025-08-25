@@ -104,10 +104,13 @@ class AppConfig {
 }
 
 class AppAssets {
-  static const String logo = "assets/images/logo.png";
-  static const String yogaIcon = "assets/icons/yoga.svg";
-  static const String trophyIcon = "assets/icons/trophy.svg";
-  static const String whatsappIcon = "assets/icons/whatsapp.svg";
-  static const String playIcon = "assets/icons/play.svg";
+  // Only include assets that actually exist
   static const String messagesData = "assets/data/yoga_messages.json";
+  
+  // Placeholder assets (commented out until we add them)
+  // static const String logo = "assets/images/logo.png";
+  // static const String yogaIcon = "assets/icons/yoga.svg";
+  // static const String trophyIcon = "assets/icons/trophy.svg";
+  // static const String whatsappIcon = "assets/icons/whatsapp.svg";
+  // static const String playIcon = "assets/icons/play.svg";
 }
