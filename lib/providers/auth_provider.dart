@@ -32,14 +32,15 @@ class AuthProvider extends ChangeNotifier {
       debugPrint('📞 Verifying phone: $trimmedPhone');
       debugPrint('🌐 API URL: $url');
       
+      // Try with exact same headers as Android
       final response = await http.get(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'User-Agent': 'YogaChallenge-Flutter/1.0',
+          // Remove User-Agent that might cause issues
         },
-      ).timeout(const Duration(seconds: 15));
+      ).timeout(const Duration(seconds: 30)); // Longer timeout for BrowserStack
       
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
