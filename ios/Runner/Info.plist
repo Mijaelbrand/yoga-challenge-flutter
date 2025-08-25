@@ -48,13 +48,6 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	
-	<!-- Network Security - Simplified for BrowserStack compatibility -->
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
-	
 	<!-- Permissions -->
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs camera access for video features</string>
@@ -72,21 +65,11 @@
 		<string>remote-notification</string>
 	</array>
 	
-	<!-- App Transport Security -->
+	<!-- Network Security - Allow all connections for development -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
-		<false/>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>your-backend-domain.com</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-			</dict>
-		</dict>
+		<true/>
 	</dict>
 </dict>
 </plist>
