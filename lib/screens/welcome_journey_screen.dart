@@ -21,7 +21,7 @@ class WelcomeJourneyScreen extends StatelessWidget {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(60),
                 ),
                 child: Icon(
@@ -176,7 +176,7 @@ class WelcomeJourneyScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isCompleted ? AppColors.primary.withValues(alpha: 0.1) : Colors.white,
+        color: isCompleted ? AppColors.primary.withOpacity(0.1) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isCompleted ? AppColors.primary : AppColors.border,
@@ -184,7 +184,7 @@ class WelcomeJourneyScreen extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

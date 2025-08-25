@@ -105,7 +105,7 @@ class _IntroVideoScreenState extends State<IntroVideoScreen> {
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.7),
+                color: Colors.black.withOpacity(0.7),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
