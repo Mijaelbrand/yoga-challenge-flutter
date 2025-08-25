@@ -53,7 +53,7 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
                       color: AppColors.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(40),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.phone_android,
                       size: 40,
                       color: AppColors.primary,
@@ -171,7 +171,7 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.info_outline,
                         color: AppColors.primary,
                         size: 24,
@@ -307,7 +307,7 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
   }
 
   void _openPrivacyPolicy() async {
-    final url = AppConfig.privacyPolicyUrl;
+    const url = AppConfig.privacyPolicyUrl;
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
     }

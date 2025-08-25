@@ -101,7 +101,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
                           });
                         },
                       );
-                    }).toList(),
+                    }),
                     
                     const SizedBox(height: 32),
                     
@@ -278,7 +278,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
                 ),
               ),
             );
-          }).toList(),
+          }),
           
           const SizedBox(height: 8),
           
