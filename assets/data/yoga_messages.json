@@ -307,5 +307,10 @@
     "7_days": {
       "everyday": [0, 1, 2, 3, 4, 5, 6]
     }
+  },
+  "_metadata": {
+    "version": "1.1.4",
+    "updated": "2025-08-25",
+    "note": "JSON parsing fixed for BrowserStack iOS compatibility"
   }
 }
