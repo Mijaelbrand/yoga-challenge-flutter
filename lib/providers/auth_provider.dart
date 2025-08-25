@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import '../models/yoga_message.dart';
 import '../utils/constants.dart';
 
@@ -27,13 +29,18 @@ class AuthProvider extends ChangeNotifier {
       // Only replace + with %2B, keep everything else as-is (spaces, dashes, parentheses)
       final encodedPhone = trimmedPhone.replaceAll('+', '%2B');
       
+      final url = '${AppConfig.checkPhoneUrl}?phone=$encodedPhone';
+      debugPrint('📞 Verifying phone: $trimmedPhone');
+      debugPrint('🌐 API URL: $url');
+      
       final response = await http.get(
-        Uri.parse('${AppConfig.checkPhoneUrl}?phone=$encodedPhone'),
+        Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'User-Agent': 'YogaChallenge-Flutter/1.0',
         },
-      );
+      ).timeout(const Duration(seconds: 15));
       
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
