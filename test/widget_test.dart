@@ -57,8 +57,8 @@ void main() {
       await tester.tap(continueButton);
       await tester.pump();
 
-      // Should show validation error
-      expect(find.text('Por favor ingresa un número válido'), findsOneWidget);
+      // Should show validation error - matches Android strings.xml exactly
+      expect(find.text('Por favor ingresa un número de teléfono válido'), findsOneWidget);
     });
 
     testWidgets('Dashboard should render without errors', (WidgetTester tester) async {
