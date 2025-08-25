@@ -1,0 +1,74 @@
+{
+  "messages": {
+    "1": {
+      "notification_title": "¡Bienvenido al Yoga Challenge! 🙌",
+      "notification_text": "Tu práctica segura comienza aquí...",
+      "full_message": "¡Felicidades por dar este paso hacia tu salud y bienestar! 🙌\n\nVoy a ser sincero: hacer ejercicio en línea tiene sus riesgos... pero hay un par de cosas que pueden hacer tu práctica MUCHO más segura (y no es lo que la mayoría cree).\n\nCuando aprietes el botón abajo, baja hasta el final de la página. Allí verás 2 videos importantes que se quedarán siempre disponibles.\n\n🎥 El primero dura menos de 3 min y es esencial.\n\n🎥 El segundo es una mini práctica de 11 min con tips clave para adaptar tu práctica y sentirte bien en tu cuerpo.\n\nDesde mañana recibirás 1 video cada día que hayas escogido. Esos no se quedan disponibles, así que ¡aprovecha cada uno! 😊",
+      "video_url": "day1",
+      "video_button_text": "Comenzar mi práctica segura"
+    },
+    "2": {
+      "notification_title": "Día 2: ¿No tienes tiempo? 🤔",
+      "notification_text": "Apostemos a que SÍ tienes 5 minutos...",
+      "full_message": "La excusa más común que escucho es: \"Es que no tengo cuándo\" 😅\n\nHoy te traigo una práctica que toma SOLO 5 minutos.\nY te prometo: si la haces, te vas a sentir mejor.\n¿Apostamos a que sí tienes 5 minutos? 😉\n\nLa práctica está dividida en 3 partes:\n✅ Puedes hacer solo 5 min y ya notarás un cambio.\n✅ Si quieres seguir, puedes hacer 10 o 15 min.\n\n¡Tú decides! 💪\nNos vemos adentro ✨",
+      "video_url": "day2",
+      "video_button_text": "Practiquemos 5, 10 o 15 mins"
+    },
+    "3": {
+      "notification_title": "Día 3: El problema del yoga multinivel 😬",
+      "notification_text": "¿Por qué una clase no funciona para todos?",
+      "full_message": "Algo que no me gusta del yoga moderno es que muchas clases son \"multinivel\" 😬\nY la verdad… es difícil que una clase funcione igual para todos.\n\nPor eso hoy te comparto una práctica de 10 min donde te muestro cómo adaptar la intensidad de menos a más, incluso si el profe no da opciones. 🙌\n\nEste video es parte del curso de Principios de Postura incluido en la membresía 😉",
+      "video_url": "day3",
+      "video_button_text": "Adaptando intensidad para mi"
+    },
+    "4": {
+      "notification_title": "Día 4: Construyendo tu hábito 🌱",
+      "notification_text": "¿Estás encontrando tu momento? 🤗",
+      "full_message": "Estas clases pronto desaparecerán... espero puedas aprovecharlas!\n\nEstamos construyendo un hábito que perdure...\n\n¿Pudiste hacer al menos 5 minutos de práctica hasta ahora?\n\nCuéntame porfa si estás encontrando un momento para tu práctica. Estoy aquí para apoyarte 🤗\n\nLa clase de hoy es una forma hermosa de plantar semillas ✨",
+      "video_url": "day4",
+      "video_button_text": "Plantemos semillas"
+    },
+    "5": {
+      "notification_title": "Día 5: El tiempo se escapa ⏰",
+      "notification_text": "El secreto de quienes crean el hábito...",
+      "full_message": "El día se va como arena entre los dedos 😮‍💨\n\nTrabajo, familia, el cel… ¡todo parece interrumpir la práctica!\n\nEn el primer video te sugerí comenzar el día con tu práctica 🙏\n\nEso suele marcar la diferencia entre quienes crean el hábito… y quienes no.\n\nSi no puedes en la mañana, ¿podrías hacerlo justo después del trabajo?\n\nLa práctica de hoy dura solo 11 min y te ayuda a entender el concepto de extensión axial, clave en casi todas las posturas de yoga.\n\nEs parte del curso de Principios de Postura incluido en la membresía 😉\n\n¿Lo estás logrando? Cuéntame 💬",
+      "video_url": "day5",
+      "video_button_text": "Mi extensión axial"
+    },
+    "6": {
+      "notification_title": "Día 6: Un regalo para tu vida ✨",
+      "notification_text": "Este concepto puede transformar todo...",
+      "full_message": "Hoy quiero regalarte una reflexión que (de corazón) espero te sirva para el resto del año… y quizás de tu vida ✨\n\nSi este año quieres más éxito, plenitud, salud o felicidad… este concepto puede transformar todo 🌱\n\nAprieta el enlace para accederla ⬇️",
+      "video_url": "day6",
+      "video_button_text": "Transformar mi vida"
+    },
+    "7": {
+      "notification_title": "Día 7: 15 años de yoga y aún... 😮",
+      "notification_text": "¡No saben sentarse cómodas!",
+      "full_message": "Me impresiona cuántas personas con 10 o 15 años de yoga… ¡aún no saben cómo sentarse cómodas! 😮\n\nEs una pena, y creo que como profes tenemos parte de la responsabilidad.\nSentarse bien se enseña… y se aprende.\n\nHoy te comparto el último video de prueba del Curso de Principios de Postura 🧘\nEste curso es parte de la membresía, que está en oferta solo por este mes.\n\nMira la oferta justo debajo del video ⬇️",
+      "video_url": "day7",
+      "video_button_text": "Aprender a sentarme bien"
+    },
+    "8": {
+      "notification_title": "Día 8: Video imperdible! 🙌",
+      "notification_text": "Qi Gong para cuello y hombros 🌀",
+      "full_message": "Este es un video imperdible! 🙌\nIncluye un movimiento de Qi Gong (base del Tai Chi) que ayuda a deslizar los nervios del cuello y hombros 🌀\n\nDato extra: lo que hace mi práctica distinta es que mezclo Qi Gong + entrenamiento funcional.\nPara mí, el oro está en el movimiento consciente, las respiraciones largas y la atención plena ✨\n\nMira la practica de hoy aquí:",
+      "video_url": "day8",
+      "video_button_text": "Mi Qi Gong + funcional"
+    },
+    "9": {
+      "notification_title": "Día 9: ¿15 minutos pueden cambiar todo? 🤔",
+      "notification_text": "Cuando lo repites cada día... se siente",
+      "full_message": "Mucha gente no me cree cuando digo que 15 minutos diarios pueden hacer una diferencia enorme 🙌\nPero cuando lo repites cada día… se siente. Se nota.\n\nHoy la clase está enfocada en expandir energía ✨\nY hasta con solo 5 minutos, ya estás avanzando.\n\n5 minutos te conectan con tu cuerpo, tu mente y el agradecimiento por ambos 💛\n¡Haz lo que puedas hoy!",
+      "video_url": "day9",
+      "video_button_text": "Expandir mi energía"
+    },
+    "10": {
+      "notification_title": "Día 10: Subimos el calor... 🌶️",
+      "notification_text": "¿Qué tan picante lo quieres? 😉",
+      "full_message": "Ya unos 10 días de desafío, y es hora de subir el calor...\n\nTranqui: tú decides el nivel de picante 🌶️😉\n\nComo en un restaurante: te preguntan ¿qué tan picante lo quieres?\nAquí es igual. A veces subimos la intensidad, pero tú siempre tienes el control.\n\nLa idea es que se sienta como un reto sabroso, que te motive y te deje con buena energía al final 🙌\n\nHoy la práctica tiene más enfoque abdominal (¡pero sin abdominales!).",
+      "video_url": "day10",
+      "video_button_text": "Mi reto sabroso"
+    }
+  }
+}
