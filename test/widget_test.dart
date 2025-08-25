@@ -96,7 +96,8 @@ void main() {
 
       // Check that dashboard renders without error
       expect(find.byType(DashboardScreen), findsOneWidget);
-      expect(find.text('Mi Desafío'), findsOneWidget);
+      // Dashboard now has no header (matches Android design) - check for progress card instead
+      expect(find.textContaining('Día'), findsOneWidget);
     });
 
     testWidgets('Navigation from welcome to phone entry works', (WidgetTester tester) async {
