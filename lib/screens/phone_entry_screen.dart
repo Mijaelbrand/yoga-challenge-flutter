@@ -72,6 +72,18 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
                   textAlign: TextAlign.center,
                 ),
                 
+                const SizedBox(height: 8),
+                
+                // Version indicator for debugging
+                Text(
+                  'DEBUG: App v1.1.3 - Build #31',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                
                 const SizedBox(height: 12),
                 
                 Text(
