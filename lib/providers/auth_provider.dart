@@ -20,6 +20,8 @@ class AuthProvider extends ChangeNotifier {
     setLoading(true);
     setError(null);
     
+    List<String> testResults = [];
+    
     try {
       // Match Android: just trim and send as-is, only encoding the + sign
       final trimmedPhone = phone.trim();
@@ -36,17 +38,39 @@ class AuthProvider extends ChangeNotifier {
       debugPrint('🌐 Full API URL: $url');
       debugPrint('🌐 Base URL: ${AppConfig.checkPhoneUrl}');
       
-      // First test basic connectivity
+      // Multiple connectivity tests
+      
+      // Test 1: HTTPS Google
       try {
-        debugPrint('🔍 Testing basic connectivity to google.com...');
         final testDio = Dio();
-        testDio.options.connectTimeout = const Duration(seconds: 10);
+        testDio.options.connectTimeout = const Duration(seconds: 5);
         await testDio.get('https://www.google.com');
-        debugPrint('✅ Basic internet connectivity: OK');
+        testResults.add('✅ HTTPS Google: OK');
       } catch (e) {
-        debugPrint('❌ Basic internet connectivity: FAILED - $e');
-        throw Exception('No internet connection available');
+        testResults.add('❌ HTTPS Google: ${e.runtimeType}');
       }
+      
+      // Test 2: HTTP (insecure)
+      try {
+        final testDio = Dio();
+        testDio.options.connectTimeout = const Duration(seconds: 5);
+        await testDio.get('http://httpbin.org/get');
+        testResults.add('✅ HTTP: OK');
+      } catch (e) {
+        testResults.add('❌ HTTP: ${e.runtimeType}');
+      }
+      
+      // Test 3: Our API domain (HTTPS)
+      try {
+        final testDio = Dio();
+        testDio.options.connectTimeout = const Duration(seconds: 5);
+        await testDio.get('https://akilainstitute.com/');
+        testResults.add('✅ akilainstitute.com: OK');
+      } catch (e) {
+        testResults.add('❌ akilainstitute.com: ${e.runtimeType}');
+      }
+      
+      debugPrint('Connectivity Test Results: ${testResults.join(', ')}');
       
       // Use Dio HTTP client for better iOS compatibility
       final dio = Dio();
@@ -153,17 +177,18 @@ class AuthProvider extends ChangeNotifier {
       );
       
       // Provide more specific error message based on error type
-      String userError = 'CONEXIÓN FALLÓ v1.1.3:\n';
+      String userError = 'NETWORK ERROR v1.1.3:\n';
       String debugInfo = '';
       
-      if (e.toString().contains('No internet connection')) {
-        userError = 'SIN INTERNET:\nNo se puede conectar a Google.com\nVerifica tu conexión WiFi/datos';
-        debugInfo = '\n\n[TEST]\nInternet: FAILED';
-      } else if (e is DioException) {
-        debugInfo = '\n\n[DEBUG v1.1.3]\n';
-        debugInfo += 'Tipo: ${e.type}\n';
-        debugInfo += 'URL: akilainstitute.com/api/yoga/check-phone.php\n';
-        debugInfo += 'Error: ${e.error}\n';
+      // Show connectivity test results in error
+      if (testResults.isNotEmpty) {
+        debugInfo = '\n\n[CONNECTIVITY TESTS]\n${testResults.join('\n')}\n';
+      }
+      
+      if (e is DioException) {
+        debugInfo += '\n[API ERROR]\n';
+        debugInfo += 'Type: ${e.type}\n';
+        debugInfo += 'Message: ${e.message}\n';
         
         switch (e.type) {
           case DioExceptionType.connectionTimeout:
