@@ -17,7 +17,7 @@ dependencies:
   
   # HTTP Requests
   http: ^1.1.0
-  dio: ^5.3.2
+  dio: ^5.4.0  # Alternative HTTP client for iOS networking issues
   
   # Local Storage
   shared_preferences: ^2.2.2

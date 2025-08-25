@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'dart:async';
 import 'dart:convert';
 import '../models/yoga_message.dart';
@@ -32,22 +33,26 @@ class AuthProvider extends ChangeNotifier {
       debugPrint('📞 Verifying phone: $trimmedPhone');
       debugPrint('🌐 API URL: $url');
       
-      // Try with exact same headers as Android
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          // Remove User-Agent that might cause issues
-        },
-      ).timeout(const Duration(seconds: 30)); // Longer timeout for BrowserStack
+      // Use Dio HTTP client for better iOS compatibility
+      final dio = Dio();
+      dio.options.connectTimeout = const Duration(seconds: 30);
+      dio.options.receiveTimeout = const Duration(seconds: 30);
+      dio.options.headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      };
+      
+      final response = await dio.get(url);
+      
+      debugPrint('📱 Response status: ${response.statusCode}');
+      debugPrint('📱 Response data: ${response.data}');
       
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.data is String ? jsonDecode(response.data) : response.data;
         _verificationResult = PhoneVerificationResult.fromJson(data);
         return _verificationResult!;
       } else {
-        throw Exception('HTTP ${response.statusCode}: ${response.body}');
+        throw Exception('HTTP ${response.statusCode}: ${response.data}');
       }
     } catch (e) {
       final error = PhoneVerificationResult(
@@ -84,15 +89,14 @@ class AuthProvider extends ChangeNotifier {
   Future<String?> getVideoToken(String phoneNumber) async {
     try {
       final encodedPhone = Uri.encodeComponent(phoneNumber);
-      final response = await http.get(
-        Uri.parse('${AppConfig.apiBaseUrl}/get-video-token.php?phone=$encodedPhone'),
-        headers: {
-          'Accept': 'application/json',
-        },
-      );
+      final dio = Dio();
+      dio.options.connectTimeout = const Duration(seconds: 30);
+      dio.options.receiveTimeout = const Duration(seconds: 30);
+      
+      final response = await dio.get('${AppConfig.apiBaseUrl}/get-video-token.php?phone=$encodedPhone');
       
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.data is String ? jsonDecode(response.data) : response.data;
         if (data['success'] == true && data['token'] != null) {
           return data['token'];
         }
