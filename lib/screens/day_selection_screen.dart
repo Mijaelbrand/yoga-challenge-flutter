@@ -23,8 +23,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
   }
 
   void _initializeDaySelections() {
-    for (int i = 0; i < AppStrings.daysOfWeek.length; i++) {
-      final day = AppStrings.daysOfWeek[i];
+    for (int i = 0; i < AppStrings.daysShort.length; i++) {
       final dayShort = AppStrings.daysShort[i];
       _daySelections[dayShort] = false;
       _selectedTimes[dayShort] = null;
@@ -201,7 +200,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: AppColors.primary),
                   ),
