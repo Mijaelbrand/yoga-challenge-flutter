@@ -66,24 +66,89 @@ class YogaMessage {
 
 @JsonSerializable()
 class PhoneVerificationResult {
-  final bool isRegistered;
-  final bool isAccessExpired;
-  final DateTime? registrationDate;
-  final int daysSinceRegistration;
-  final int remainingDays;
+  final bool registered;
+  final bool? isAccessExpired;  // Make optional since server doesn't always provide
+  final String? registrationDate;  // Server sends as string
+  final int? daysSinceRegistration;  // Make optional
+  final int daysRemaining;  // Match server field name
+  final String? phone;
+  final String? name;
+  final String? email;
+  final String? source;
+  final String? language;
   final String? error;
 
   PhoneVerificationResult({
-    required this.isRegistered,
-    required this.isAccessExpired,
+    required this.registered,
+    this.isAccessExpired,
     this.registrationDate,
-    required this.daysSinceRegistration,
-    required this.remainingDays,
+    this.daysSinceRegistration,
+    required this.daysRemaining,
+    this.phone,
+    this.name,
+    this.email,
+    this.source,
+    this.language,
     this.error,
   });
 
-  factory PhoneVerificationResult.fromJson(Map<String, dynamic> json) => _$PhoneVerificationResultFromJson(json);
-  Map<String, dynamic> toJson() => _$PhoneVerificationResultToJson(this);
+  // Custom fromJson to handle server response format
+  factory PhoneVerificationResult.fromJson(Map<String, dynamic> json) {
+    return PhoneVerificationResult(
+      registered: json['registered'] ?? false,
+      isAccessExpired: json['access_expires'] != null ? _isAccessExpired(json['access_expires']) : null,
+      registrationDate: json['registration_date'],
+      daysSinceRegistration: json['days_since_registration'],
+      daysRemaining: json['days_remaining'] ?? 0,
+      phone: json['phone']?.toString(),
+      name: json['name'],
+      email: json['email'],
+      source: json['source'],
+      language: json['language'],
+      error: json['error'],
+    );
+  }
+
+  // Helper to determine if access is expired
+  static bool _isAccessExpired(String? accessExpires) {
+    if (accessExpires == null) return true;
+    try {
+      // Parse date and check if it's in the past
+      // Server format appears to be MM/dd/yyyy
+      final parts = accessExpires.split('/');
+      if (parts.length == 3) {
+        final month = int.parse(parts[0]);
+        final day = int.parse(parts[1]);
+        final year = int.parse(parts[2]);
+        final expireDate = DateTime(year, month, day);
+        return DateTime.now().isAfter(expireDate);
+      }
+    } catch (e) {
+      // If parsing fails, assume expired
+      return true;
+    }
+    return true;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'registered': registered,
+      'is_access_expired': isAccessExpired,
+      'registration_date': registrationDate,
+      'days_since_registration': daysSinceRegistration,
+      'days_remaining': daysRemaining,
+      'phone': phone,
+      'name': name,
+      'email': email,
+      'source': source,
+      'language': language,
+      'error': error,
+    };
+  }
+
+  // Convenience getters for backward compatibility
+  bool get isRegistered => registered;
+  int get remainingDays => daysRemaining;
 }
 
 @JsonSerializable()

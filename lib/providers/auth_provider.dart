@@ -117,7 +117,8 @@ class AuthProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = response.data is String ? jsonDecode(response.data) : response.data;
         _verificationResult = PhoneVerificationResult.fromJson(data);
-        debugPrint('✅ Parsed result: isRegistered=${_verificationResult!.isRegistered}');
+        debugPrint('✅ Parsed result: registered=${_verificationResult!.registered}, days_remaining=${_verificationResult!.daysRemaining}');
+        debugPrint('✅ User: ${_verificationResult!.name}, Phone: ${_verificationResult!.phone}');
         return _verificationResult!;
       } else {
         throw Exception('HTTP ${response.statusCode}: ${response.data}');
