@@ -283,3 +283,4 @@ class AppState extends ChangeNotifier {
     }
   }
 }
+

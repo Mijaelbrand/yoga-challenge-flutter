@@ -68,10 +68,10 @@ void main() {
 
     testWidgets('Dashboard should show progress elements', (WidgetTester tester) async {
       final appState = AppState();
-      appState.setPhoneNumber('+1234567890');
+      appState.setUserPhone('+1234567890');
       appState.setChallengeStartDate(DateTime.now());
       appState.setIntroCompleted(true);
-      appState.setCurrentScreen(AppScreen.dashboard);
+      appState.setScreen(AppScreen.dashboard);
 
       await tester.pumpWidget(
         MultiProvider(
@@ -113,3 +113,4 @@ void main() {
     });
   });
 }
+

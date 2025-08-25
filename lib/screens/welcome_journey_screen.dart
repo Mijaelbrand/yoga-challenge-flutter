@@ -248,3 +248,4 @@ class WelcomeJourneyScreen extends StatelessWidget {
     );
   }
 }
+

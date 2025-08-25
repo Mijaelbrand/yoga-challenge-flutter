@@ -148,3 +148,4 @@ echo "- flutter build ipa --release          # Build for TestFlight"
 echo "- flutter test --coverage              # Run tests with coverage"
 echo "- flutter analyze                      # Analyze code"
 echo ""
+

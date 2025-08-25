@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/yoga_message.dart';
@@ -19,16 +20,14 @@ class AuthProvider extends ChangeNotifier {
     setError(null);
     
     try {
-      final response = await http.post(
-        Uri.parse(AppConfig.checkPhoneUrl),
+      // Use GET request to match Android implementation
+      final encodedPhone = Uri.encodeComponent(phone);
+      final response = await http.get(
+        Uri.parse('${AppConfig.checkPhoneUrl}?phone=$encodedPhone'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: jsonEncode({
-          'phone': phone,
-          'app': 'yoga_challenge_flutter',
-        }),
       );
       
       if (response.statusCode == 200) {
@@ -69,6 +68,32 @@ class AuthProvider extends ChangeNotifier {
     return AppConfig.instagramUrl;
   }
   
+  // Generate video URL with token for secure access
+  Future<String?> getVideoUrlWithToken(String videoId, String userPhone) async {
+    try {
+      final encodedPhone = Uri.encodeComponent(userPhone);
+      final response = await http.get(
+        Uri.parse('${AppConfig.apiBaseUrl}/get-video-token.php?phone=$encodedPhone&video_id=$videoId'),
+        headers: {
+          'Accept': 'application/json',
+        },
+      );
+      
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final token = data['token'];
+        if (token != null) {
+          // Return the hybrid video URL with token
+          return '${AppConfig.videoBaseUrl}?token=$token&video_id=$videoId';
+        }
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error getting video token: $e');
+      return null;
+    }
+  }
+  
   void setLoading(bool loading) {
     _isLoading = loading;
     notifyListeners();
@@ -84,3 +109,4 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+

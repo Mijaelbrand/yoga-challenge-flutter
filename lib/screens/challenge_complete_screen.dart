@@ -126,7 +126,7 @@ class ChallengeCompleteScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton.icon(
-                      onPressed: () => _openInstagram(),
+                      onPressed: () => _openInstagram(context),
                       icon: const Icon(Icons.people),
                       label: const Text(AppStrings.joinCommunity),
                       style: ElevatedButton.styleFrom(
@@ -147,8 +147,8 @@ class ChallengeCompleteScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 48,
                     child: OutlinedButton.icon(
-                      onPressed: () => _openWhatsApp(),
-                      icon: const Icon(Icons.whatsapp),
+                      onPressed: () => _openWhatsApp(context),
+                      icon: const Icon(Icons.message),
                       label: const Text('Contactar Soporte'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.whatsappGreen,
@@ -256,7 +256,7 @@ class ChallengeCompleteScreen extends StatelessWidget {
     );
   }
 
-  void _openInstagram() async {
+  void _openInstagram(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final url = authProvider.getInstagramCommunityLink();
     
@@ -265,7 +265,7 @@ class ChallengeCompleteScreen extends StatelessWidget {
     }
   }
 
-  void _openWhatsApp() async {
+  void _openWhatsApp(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final url = authProvider.generateWhatsAppSupportLink();
     
@@ -279,3 +279,4 @@ class ChallengeCompleteScreen extends StatelessWidget {
     appState.resetAppState();
   }
 }
+

@@ -86,7 +86,7 @@ class AppStrings {
 class AppConfig {
   static const String apiBaseUrl = "https://akilainstitute.com/api/yoga";
   static const String manyChatWebhookUrl = "https://akilainstitute.com/api/yoga/manychat-webhook.php";
-  static const String checkPhoneUrl = "https://akilainstitute.com/api/yoga/check-phone-v2.php";
+  static const String checkPhoneUrl = "https://akilainstitute.com/api/yoga/check-phone.php";
   static const String videoBaseUrl = "https://akilainstitute.com/api/yoga/video.php";
   static const String whatsappNumber = "+13202897388";
   static const String instagramUrl = "https://www.instagram.com/akilainstitute/";

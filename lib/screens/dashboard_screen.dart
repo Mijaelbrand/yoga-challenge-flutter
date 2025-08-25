@@ -356,7 +356,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           height: 56,
           child: ElevatedButton.icon(
             onPressed: () => _openWhatsApp(),
-            icon: const Icon(Icons.whatsapp),
+            icon: const Icon(Icons.message),
             label: const Text(AppStrings.whatsappContact),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.whatsappGreen,
@@ -437,3 +437,4 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 }
+

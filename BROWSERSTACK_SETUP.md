@@ -243,3 +243,4 @@ BrowserStack provides the best free option for testing your iOS app without phys
 **Start with**: Sign up for BrowserStack and upload your first build!
 
 **Goal**: Ensure your iOS app works perfectly on all supported devices before App Store submission!
+

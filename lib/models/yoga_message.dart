@@ -107,3 +107,4 @@ class UserSchedule {
   factory UserSchedule.fromJson(Map<String, dynamic> json) => _$UserScheduleFromJson(json);
   Map<String, dynamic> toJson() => _$UserScheduleToJson(this);
 }
+

@@ -131,3 +131,4 @@ class NotificationProvider extends ChangeNotifier {
     return androidGranted ?? false;
   }
 }
+
