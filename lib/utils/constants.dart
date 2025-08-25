@@ -1,77 +1,80 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color primary = Color(0xFF4CAF50);
-  static const Color primaryDark = Color(0xFF388E3C);
-  static const Color accent = Color(0xFFFF9800);
-  static const Color background = Color(0xFFF5F5F5);
-  static const Color surface = Colors.white;
-  static const Color textPrimary = Color(0xFF212121);
+  static const Color primary = Color(0xFF4F52BD);  // Indigo - matching Android
+  static const Color primaryDark = Color(0xFF3D4199);  // Matching Android primary_dark
+  static const Color primaryLight = Color(0xFF7376D5);  // Matching Android primary_light
+  static const Color accent = Color(0xFF438F62);  // Green - matching Android
+  static const Color background = Color(0xFFFFFFFF);  // Pure white - matching Android
+  static const Color surface = Color(0xFFFAFAFA);  // Matching Android surface
+  static const Color textPrimary = Color(0xFF4A4A4A);  // Grey - matching Android
   static const Color textSecondary = Color(0xFF757575);
   static const Color border = Color(0xFFE0E0E0);
-  static const Color error = Color(0xFFD32F2F);
-  static const Color success = Color(0xFF4CAF50);
-  static const Color warning = Color(0xFFFF9800);
-  static const Color info = Color(0xFF2196F3);
+  static const Color error = Color(0xFF751717);  // Red - matching Android
+  static const Color success = Color(0xFF438F62);  // Green - matching Android
+  static const Color warning = Color(0xFFF59E0B);  // Matching Android
+  static const Color info = Color(0xFF246885);  // Teal - matching Android
   static const Color whatsappGreen = Color(0xFF25D366);
-  static const Color messageBackground = Color(0xFFF8F9FA);
-  static const Color accentLight = Color(0xFFFFF3E0);
+  static const Color messageBackground = Color(0xFFE9F4FF);  // Matching Android
+  static const Color accentLight = Color(0xFFE8F5E9);  // Matching Android accent_light
 }
 
 class AppStrings {
   // Welcome Screen
-  static const String welcomeTitle = "¡Bienvenido al Desafío de Yoga!";
-  static const String welcomeSubtitle = "Transforma tu vida con 31 días de práctica consciente";
-  static const String startButton = "Comenzar";
+  static const String welcomeTitle = "Desafío Akila";
+  static const String welcomeSubtitle = "Una práctica transformativa, al alcance de tu mano";
+  static const String startButton = "Comienza Tu Viaje";
   
   // Phone Entry
-  static const String phoneEntryTitle = "Ingresa tu número de teléfono";
-  static const String phoneEntrySubtitle = "Para verificar tu registro y acceder al desafío";
-  static const String phoneHint = "Número de teléfono";
+  static const String phoneEntryTitle = "Ingresa Tu Número de Teléfono";
+  static const String phoneEntrySubtitle = "Lo usaremos para enviarte recordatorios y actualizaciones";
+  static const String phoneHint = "Número de Teléfono";
   static const String continueButton = "Continuar";
-  static const String privacyPolicy = "Política de Privacidad";
+  static const String privacyPolicy = "Ver Política de Privacidad";
   static const String errorPhoneInvalid = "Por favor ingresa un número válido";
   
   // Intro Video
-  static const String introVideoTitle = "Video de Introducción";
-  static const String introVideoSubtitle = "Mira este video para comenzar tu viaje";
-  static const String finishedButton = "Terminé de ver";
+  static const String introVideoTitle = "Introducción:";
+  static const String introVideoSubtitle = "Si todavía no viste este video introductorio, dura un minuto y es importante:";
+  static const String finishedButton = "Continuar";
   
   // Welcome Journey
-  static const String journeyTitle = "¡Bienvenido a tu viaje!";
-  static const String journeySubtitle = "Estás a un paso de transformar tu vida";
-  static const String journeyContinue = "Continuar";
+  static const String journeyTitle = "Bienvenid@ a Tu Viaje";
+  static const String journeySubtitle = "¡Yey! 🎉\n\nEstás a punto de iniciar un camino que podría cambiar tu vida para siempre";
+  static const String journeyContinue = "¡VAMOS ADELANTE!";
   
   // Day Selection
-  static const String daySelectionTitle = "Selecciona tus días de práctica";
-  static const String daySelectionSubtitle = "Elige los días y horarios que mejor te funcionen";
-  static const String confirmButton = "Confirmar";
+  static const String daySelectionTitle = "Elige Tus Días de Práctica";
+  static const String daySelectionSubtitle = "Selecciona al menos 2 días por semana, y elige a qué hora quieres hacer tu práctica";
+  static const String confirmButton = "Confirmar Horario";
   static const String selectedDays = "Seleccionados: {count} días";
-  static const String errorMinDays = "Selecciona al menos 2 días";
+  static const String errorMinDays = "Por favor selecciona al menos 2 días por semana";
   static const String selectTime = "Seleccionar hora";
   
   // Dashboard
   static const String dashboardTitle = "Mi Desafío";
   static const String dayProgress = "Día {day} de 31";
   static const String nextSession = "Próxima sesión: {session}";
-  static const String streakText = "🔥 {streak} day streak";
-  static const String practiceCompleted = "Práctica completada";
-  static const String todayMessage = "MENSAJE DE HOY";
+  static const String streakText = "🔥 Racha de {streak} días";
+  static const String practiceCompleted = "Completado";
+  static const String todayMessage = "Mensaje de hoy";
   static const String noPracticeToday = "No hay práctica programada para hoy";
   static const String accessDays = "Acceso: {days} días restantes";
   static const String whatsappContact = "Contacto WhatsApp";
   
   // Challenge Complete
-  static const String challengeCompleteTitle = "¡Desafío Completado!";
+  static const String challengeCompleteTitle = "¡Felicitaciones!";
+  static const String challengeCompleteSubtitle = "Has completado el Desafío Akila de 30 Días";
   static const String finalStreak = "Racha más larga: {streak} días 🔥";
   static const String totalPractices = "Total de prácticas: {count} sesiones";
-  static const String joinCommunity = "Unirse a la Comunidad";
+  static const String joinCommunity = "Síguenos en Instagram";
+  static const String monthlyClassNotice = "Mantente conectado para clases mensuales gratuitas";
   
   // Errors
   static const String errorConnection = "Error de conexión";
   static const String errorUnexpected = "Ocurrió un error inesperado";
-  static const String accessExpired = "Tu acceso ha expirado. Contacta soporte para renovar.";
-  static const String registrationRequired = "Tu número no está registrado. Regístrate primero.";
+  static const String accessExpired = "Tu acceso ha expirado después de 40 días";
+  static const String registrationRequired = "Teléfono no registrado. Por favor regístrate primero.";
   
   // Days of the week
   static const List<String> daysOfWeek = [

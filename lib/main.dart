@@ -36,7 +36,7 @@ class YogaChallengeApp extends StatelessWidget {
         title: 'Yoga Challenge',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primarySwatch: Colors.green,
+          primarySwatch: Colors.indigo,
           primaryColor: AppColors.primary,
           scaffoldBackgroundColor: AppColors.background,
           textTheme: GoogleFonts.poppinsTextTheme(),
@@ -88,4 +88,5 @@ class YogaChallengeApp extends StatelessWidget {
     );
   }
 }
+
 

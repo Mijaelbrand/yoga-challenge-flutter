@@ -90,19 +90,21 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
                   inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
+                    FilteringTextInputFormatter.allow(RegExp(r'[\d+\-\s\(\)]')),
                   ],
                   decoration: InputDecoration(
                     labelText: AppStrings.phoneHint,
                     prefixIcon: const Icon(Icons.phone),
-                    hintText: 'Ej: 1234567890',
+                    hintText: 'Ej: +1234567890',
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor ingresa tu número de teléfono';
                     }
-                    if (value.length < 10) {
-                      return 'El número debe tener al menos 10 dígitos';
+                    // Match Android validation: just check total length >= 10
+                    final trimmed = value.trim();
+                    if (trimmed.length < 10) {
+                      return AppStrings.errorPhoneInvalid;
                     }
                     return null;
                   },
@@ -331,4 +333,5 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
     }
   }
 }
+
 

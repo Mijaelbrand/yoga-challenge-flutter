@@ -20,8 +20,13 @@ class AuthProvider extends ChangeNotifier {
     setError(null);
     
     try {
+      // Match Android: just trim and send as-is, only encoding the + sign
+      final trimmedPhone = phone.trim();
+      
       // Use GET request to match Android implementation
-      final encodedPhone = Uri.encodeComponent(phone);
+      // Only replace + with %2B, keep everything else as-is (spaces, dashes, parentheses)
+      final encodedPhone = trimmedPhone.replaceAll('+', '%2B');
+      
       final response = await http.get(
         Uri.parse('${AppConfig.checkPhoneUrl}?phone=$encodedPhone'),
         headers: {
@@ -109,4 +114,5 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
 

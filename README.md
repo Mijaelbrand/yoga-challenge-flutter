@@ -207,3 +207,4 @@ This project is proprietary software. All rights reserved.
 
 For support and questions, contact the development team or refer to the original Android app documentation.
 
+

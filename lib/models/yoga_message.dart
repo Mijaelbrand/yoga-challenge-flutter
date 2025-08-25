@@ -108,3 +108,4 @@ class UserSchedule {
   Map<String, dynamic> toJson() => _$UserScheduleToJson(this);
 }
 
+

@@ -285,3 +285,4 @@ With these free options, you can thoroughly test your iOS app without owning a M
 
 **Goal**: Ensure your iOS app works perfectly on all supported devices before App Store submission!
 
+
