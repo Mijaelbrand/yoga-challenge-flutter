@@ -36,6 +36,18 @@ class AuthProvider extends ChangeNotifier {
       debugPrint('🌐 Full API URL: $url');
       debugPrint('🌐 Base URL: ${AppConfig.checkPhoneUrl}');
       
+      // First test basic connectivity
+      try {
+        debugPrint('🔍 Testing basic connectivity to google.com...');
+        final testDio = Dio();
+        testDio.options.connectTimeout = const Duration(seconds: 10);
+        await testDio.get('https://www.google.com');
+        debugPrint('✅ Basic internet connectivity: OK');
+      } catch (e) {
+        debugPrint('❌ Basic internet connectivity: FAILED - $e');
+        throw Exception('No internet connection available');
+      }
+      
       // Use Dio HTTP client for better iOS compatibility
       final dio = Dio();
       
@@ -141,13 +153,16 @@ class AuthProvider extends ChangeNotifier {
       );
       
       // Provide more specific error message based on error type
-      String userError = 'Error de conexión:\n';
+      String userError = 'CONEXIÓN FALLÓ v1.1.3:\n';
       String debugInfo = '';
       
-      if (e is DioException) {
-        debugInfo = '\n\n[DEBUG INFO]\n';
-        debugInfo += 'Type: ${e.type}\n';
-        debugInfo += 'URL: ${e.requestOptions.uri}\n';
+      if (e.toString().contains('No internet connection')) {
+        userError = 'SIN INTERNET:\nNo se puede conectar a Google.com\nVerifica tu conexión WiFi/datos';
+        debugInfo = '\n\n[TEST]\nInternet: FAILED';
+      } else if (e is DioException) {
+        debugInfo = '\n\n[DEBUG v1.1.3]\n';
+        debugInfo += 'Tipo: ${e.type}\n';
+        debugInfo += 'URL: akilainstitute.com/api/yoga/check-phone.php\n';
         debugInfo += 'Error: ${e.error}\n';
         
         switch (e.type) {
