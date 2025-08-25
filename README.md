@@ -1,6 +1,6 @@
 # Yoga Challenge Flutter App
 
-**Version: 1.1.3**
+**Version: 1.1.4**
 
 A Flutter version of the Yoga Challenge app with ManyChat integration and video streaming capabilities.
 

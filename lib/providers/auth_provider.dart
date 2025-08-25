@@ -170,15 +170,15 @@ class AuthProvider extends ChangeNotifier {
       debugPrint('=== NETWORK DEBUG END ===');
       
       final error = PhoneVerificationResult(
-        isRegistered: false,
+        registered: false,
         isAccessExpired: false,
         daysSinceRegistration: 0,
-        remainingDays: 0,
+        daysRemaining: 0,
         error: e.toString(),
       );
       
       // Provide more specific error message based on error type
-      String userError = 'NETWORK ERROR v1.1.3:\n';
+      String userError = 'NETWORK ERROR v1.1.4:\n';
       String debugInfo = '';
       
       // Show connectivity test results in error

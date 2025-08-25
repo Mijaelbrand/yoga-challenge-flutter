@@ -218,14 +218,14 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
         
         if (result.error != null) {
           _showErrorDialog('Error de conexión', 'No se pudo verificar el teléfono. Inténtalo más tarde.');
-        } else if (!result.isRegistered) {
+        } else if (!result.registered) {
           _showRegistrationDialog();
-        } else if (result.isAccessExpired) {
+        } else if (result.isAccessExpired ?? false) {
           _showAccessExpiredDialog();
         } else {
           // Success - save phone and continue
           appState.setUserPhone(_phoneController.text.trim());
-          appState.setRemainingAccessDays(result.remainingDays);
+          appState.setRemainingAccessDays(result.daysRemaining);
           
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
