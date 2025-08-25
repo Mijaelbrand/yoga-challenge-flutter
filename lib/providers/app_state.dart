@@ -294,10 +294,16 @@ class AppState extends ChangeNotifier {
   // Generate user messages based on selected schedule
   Future<void> generateUserMessages() async {
     try {
+      debugPrint('🔄 Starting message generation...');
+      debugPrint('📅 Schedule: $_selectedSchedule');
+      debugPrint('📅 Start date: $_challengeStartDate');
+      
       _userScheduledMessages.clear();
       
       if (_selectedSchedule.isEmpty || _challengeStartDate == null) {
-        debugPrint('Cannot generate messages: schedule or start date missing');
+        debugPrint('❌ Cannot generate messages: schedule or start date missing');
+        debugPrint('   - Schedule empty: ${_selectedSchedule.isEmpty}');
+        debugPrint('   - Start date null: ${_challengeStartDate == null}');
         return;
       }
       

@@ -34,6 +34,14 @@ class _IntroVideoScreenState extends State<IntroVideoScreen> {
             setState(() {
               _isLoading = false;
             });
+            // Hide loading after a short delay to ensure video is ready
+            Future.delayed(const Duration(seconds: 1), () {
+              if (mounted) {
+                setState(() {
+                  _isLoading = false;
+                });
+              }
+            });
           },
         ),
       )
@@ -86,10 +94,12 @@ class _IntroVideoScreenState extends State<IntroVideoScreen> {
           // Video WebView
           WebViewWidget(controller: _webViewController),
           
-          // Loading indicator
+          // Loading indicator - only show briefly, don't cover video
           if (_isLoading)
-            Container(
-              color: Colors.black,
+            Positioned(
+              bottom: 100,
+              left: 0,
+              right: 0,
               child: const Center(
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -97,71 +107,76 @@ class _IntroVideoScreenState extends State<IntroVideoScreen> {
               ),
             ),
           
-          // Instructions and button at the top
-          Positioned(
-            top: 20,
-            left: 20,
-            right: 20,
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.8),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    'Dale play!',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+          // Instructions and button at the top - positioned to be fully visible
+          SafeArea(
+            child: Positioned(
+              top: 10,
+              left: 20,
+              right: 20,
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Dale play!',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  
-                  const SizedBox(height: 12),
-                  
-                  Text(
-                    'Si todavía no has visto el video de introducción, es importante que lo hagas... dura un minuto, literalmente.',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white70,
-                      height: 1.4,
+                    
+                    const SizedBox(height: 8),
+                    
+                    Text(
+                      'Si todavía no has visto el video de introducción, es importante que lo hagas... dura un minuto, literalmente.',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white70,
+                        height: 1.3,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  
-                  const SizedBox(height: 20),
-                  
-                  // Smaller continue button
-                  SizedBox(
-                    width: 200, // Smaller width
-                    height: 40, // Smaller height
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => const WelcomeJourneyScreen(),
+                    
+                    const SizedBox(height: 12),
+                    
+                    // Continue button - made smaller and more compact
+                    SizedBox(
+                      width: 160,
+                      height: 32,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => const WelcomeJourneyScreen(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20), // More rounded
+                          elevation: 4,
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         ),
-                        elevation: 4,
-                      ),
-                      child: Text(
-                        'Ya vi el video, continuar',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                        child: Text(
+                          'Ya vi el video, continuar',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            fontSize: 11,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
