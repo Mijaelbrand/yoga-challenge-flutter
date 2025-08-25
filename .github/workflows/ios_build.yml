@@ -22,8 +22,22 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
     
+    - name: Clean previous builds
+      run: flutter clean
+      
+    - name: Reinstall dependencies
+      run: flutter pub get
+    
     - name: Generate code
-      run: flutter packages pub run build_runner build --delete-conflicting-outputs
+      run: |
+        echo "Running build_runner..."
+        flutter packages pub run build_runner build --delete-conflicting-outputs
+        echo "Checking generated files..."
+        ls -la lib/models/
+        if [ ! -f lib/models/yoga_message.g.dart ]; then
+          echo "Error: yoga_message.g.dart not generated"
+          exit 1
+        fi
     
     - name: Install iOS dependencies
       run: |
@@ -55,6 +69,9 @@ jobs:
     
     - name: Install dependencies
       run: flutter pub get
+      
+    - name: Generate code for tests
+      run: flutter packages pub run build_runner build --delete-conflicting-outputs
     
     - name: Run tests
       run: flutter test

@@ -64,12 +64,7 @@ class YogaChallengeApp extends StatelessWidget {
               ),
             ),
           ),
-          cardTheme: const CardThemeData(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(16)),
-            ),
-          ),
+          // cardTheme removed for Flutter version compatibility
           inputDecorationTheme: InputDecorationTheme(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
