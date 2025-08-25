@@ -149,7 +149,7 @@ class ChallengeCompleteScreen extends StatelessWidget {
                     child: OutlinedButton.icon(
                       onPressed: () => _openWhatsApp(context),
                       icon: const Icon(Icons.message),
-                      label: const Text('Contactar Soporte'),
+                      label: Text(AppStrings.contactSupport),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.whatsappGreen,
                         side: BorderSide(color: AppColors.whatsappGreen),

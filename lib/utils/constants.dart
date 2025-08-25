@@ -31,7 +31,7 @@ class AppStrings {
   static const String phoneHint = "Número de Teléfono";
   static const String continueButton = "Continuar";
   static const String privacyPolicy = "Ver Política de Privacidad";
-  static const String errorPhoneInvalid = "Por favor ingresa un número válido";
+  static const String errorPhoneInvalid = "Por favor ingresa un número de teléfono válido";
   
   // Intro Video
   static const String introVideoTitle = "Introducción:";
@@ -40,15 +40,16 @@ class AppStrings {
   
   // Welcome Journey
   static const String journeyTitle = "Bienvenid@ a Tu Viaje";
-  static const String journeySubtitle = "¡Yey! 🎉\n\nEstás a punto de iniciar un camino que podría cambiar tu vida para siempre";
+  static const String journeyMessage = "¡Yey! 🎉\n\nEstás a punto de iniciar un camino que podría cambiar tu vida para siempre, incluso si tus primeros pasos son pequeños.\n\nEsta práctica te ayuda a:\n• Desarrollar flexibilidad y fuerza\n• Reducir estrés y ansiedad\n• Mejorar tu postura\n• Encontrar paz mental\n\nRecibirás prácticas en los días y horas que tú establezcas, y tendrás la práctica del día disponible hasta recibir tu próxima práctica.\n\n¿Estamos listos para escoger los días y horas?";
   static const String journeyContinue = "¡VAMOS ADELANTE!";
   
   // Day Selection
   static const String daySelectionTitle = "Elige Tus Días de Práctica";
-  static const String daySelectionSubtitle = "Selecciona al menos 2 días por semana, y elige a qué hora quieres hacer tu práctica";
+  static const String daySelectionSubtitle = "Selecciona al menos 2 días por semana, y elige a qué hora quieres hacer tu práctica. El sistema te recordará esos días, y te ofrecerá un enlace que expira al día siguiente";
   static const String confirmButton = "Confirmar Horario";
   static const String selectedDays = "Seleccionados: {count} días";
   static const String errorMinDays = "Por favor selecciona al menos 2 días por semana";
+  static const String errorMaxDays = "Máximo 7 días por semana";
   static const String selectTime = "Seleccionar hora";
   
   // Dashboard
@@ -70,11 +71,19 @@ class AppStrings {
   static const String joinCommunity = "Síguenos en Instagram";
   static const String monthlyClassNotice = "Mantente conectado para clases mensuales gratuitas";
   
-  // Errors
+  // Errors and Dialogs
   static const String errorConnection = "Error de conexión";
   static const String errorUnexpected = "Ocurrió un error inesperado";
   static const String accessExpired = "Tu acceso ha expirado después de 40 días";
   static const String registrationRequired = "Teléfono no registrado. Por favor regístrate primero.";
+  static const String verificationTitle = "Verificación";
+  static const String registrationRequiredTitle = "Registro Requerido";
+  static const String accessExpiredTitle = "Acceso Expirado";
+  static const String contactSupport = "Contactar Soporte";
+  static const String register = "Registrarse";
+  static const String cancel = "Cancelar";
+  static const String close = "Cerrar";
+  static const String ok = "OK";
   
   // Days of the week
   static const List<String> daysOfWeek = [
@@ -90,13 +99,13 @@ class AppConfig {
   static const String apiBaseUrl = "https://akilainstitute.com/api/yoga";
   static const String manyChatWebhookUrl = "https://akilainstitute.com/api/yoga/manychat-webhook.php";
   static const String checkPhoneUrl = "https://akilainstitute.com/api/yoga/check-phone.php";
-  static const String videoBaseUrl = "https://akilainstitute.com/api/yoga/video.php";
+  static const String videoBaseUrl = "https://akilainstitute.com/watch/video.php";  // Matches Android HYBRID_BASE_URL
   static const String whatsappNumber = "+13202897388";
   static const String instagramUrl = "https://www.instagram.com/akilainstitute/";
   static const String privacyPolicyUrl = "https://akilainstitute.com/politica-de-privacidad/";
   
-  // Challenge settings
-  static const int challengeDurationDays = 31;
+  // Challenge settings  
+  static const int challengeDurationDays = 31;  // Matches Android: 31 days total
   static const int accessLimitDays = 40;
   static const int minPracticeDays = 2;
   static const int maxPracticeDays = 7;

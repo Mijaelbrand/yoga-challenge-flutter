@@ -47,49 +47,15 @@ class WelcomeJourneyScreen extends StatelessWidget {
               
               // Subtitle
               Text(
-                AppStrings.journeySubtitle,
+                AppStrings.journeyMessage,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: AppColors.textSecondary,
                   height: 1.5,
                 ),
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.left,
               ),
               
-              const SizedBox(height: 60),
-              
-              // Journey Steps
-              _buildJourneyStep(
-                context,
-                number: '1',
-                title: 'Video de Introducción',
-                description: 'Ya completaste el primer paso',
-                icon: Icons.check_circle,
-                isCompleted: true,
-              ),
-              
-              const SizedBox(height: 20),
-              
-              _buildJourneyStep(
-                context,
-                number: '2',
-                title: 'Selecciona tus días',
-                description: 'Elige cuándo quieres practicar',
-                icon: Icons.calendar_today,
-                isCompleted: false,
-              ),
-              
-              const SizedBox(height: 20),
-              
-              _buildJourneyStep(
-                context,
-                number: '3',
-                title: 'Comienza tu práctica',
-                description: 'Recibe videos diarios personalizados',
-                icon: Icons.play_circle_outline,
-                isCompleted: false,
-              ),
-              
-              const SizedBox(height: 60),
+              const SizedBox(height: 40),
               
               // Continue Button
               SizedBox(
@@ -129,35 +95,6 @@ class WelcomeJourneyScreen extends StatelessWidget {
               ),
               
               const SizedBox(height: 40),
-              
-              // Motivational Quote
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppColors.messageBackground,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.self_improvement,
-                      size: 32,
-                      color: AppColors.primary,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      '"El yoga no es solo ejercicio, es una forma de vida"',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textPrimary,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),

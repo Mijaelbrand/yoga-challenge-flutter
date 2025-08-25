@@ -2,6 +2,96 @@
 
 A Flutter version of the Yoga Challenge app with ManyChat integration and video streaming capabilities.
 
+## 🚨 CRITICAL: Android Parity Requirement 🚨
+
+**THIS FLUTTER APP MUST BE AN EXACT REPLICA OF THE ANDROID APP**
+
+### Mandatory Parity Rules:
+
+1. **ALL TEXT MUST MATCH ANDROID EXACTLY**
+   - Use the Android JSON files as the ONLY source of truth: `E:\Akila Challenge APP\app\src\main\res\raw\yoga_messages_with_notifications.json`
+   - All UI strings must match: `E:\Akila Challenge APP\app\src\main\res\values\strings.xml`
+   - Button texts, labels, messages, titles - EVERYTHING must be identical
+
+2. **UI/UX MUST BE IDENTICAL**
+   - Same screens in the same order
+   - Same navigation flow
+   - Same visual elements and layouts
+   - Same colors (already defined in AppColors to match Android)
+   - Same functionality and behavior
+
+3. **BEFORE MAKING ANY CHANGES**
+   - ✅ Check the Android version FIRST
+   - ✅ Compare with Android implementation
+   - ✅ Use Android files as reference:
+     - Java/Kotlin files: `E:\Akila Challenge APP\app\src\main\java\com\akila\yogachallenge\`
+     - Layouts: `E:\Akila Challenge APP\app\src\main\res\layout\`
+     - Resources: `E:\Akila Challenge APP\app\src\main\res\`
+   - ❌ DO NOT make decisions to change anything without checking Android first
+   - ❌ DO NOT add new features or text that don't exist in Android
+
+4. **iOS PLATFORM CONFLICTS**
+   - If something conflicts with iOS development requirements, DO NOT change it
+   - Instead, ASK THE USER for guidance on how to proceed
+   - Document the conflict and proposed solutions
+
+5. **TESTING CHECKLIST**
+   - [ ] Text matches Android exactly (all 31 messages, all UI strings)
+   - [ ] Button labels match Android
+   - [ ] Screen titles match Android  
+   - [ ] Navigation flow matches Android
+   - [ ] Error messages match Android
+   - [ ] Dialog texts match Android
+   - [ ] Challenge is 31 days (not 30)
+   - [ ] All features present in Android exist in Flutter
+
+### Development Workflow:
+
+```
+1. Need to add/change something?
+   ↓
+2. Check Android version first
+   ↓
+3. Is it exactly the same in Android?
+   → YES: Implement exactly as in Android
+   → NO: STOP and ask user for guidance
+   ↓
+4. Test that it matches Android
+   ↓
+5. Document any platform-specific adjustments needed
+```
+
+### Key Android Source Files for Reference:
+
+- **Messages & Content**: `/app/src/main/res/raw/yoga_messages_with_notifications.json`
+- **UI Strings**: `/app/src/main/res/values/strings.xml`
+- **Main Logic**: `/app/src/main/java/com/akila/yogachallenge/MainActivity.kt`
+- **Layouts**: `/app/src/main/res/layout/screen_*.xml`
+
+### Current Parity Status (Last Updated: August 25, 2025):
+
+✅ **SYNCHRONIZED:**
+- All 31 yoga messages and button texts from Android JSON
+- All UI strings from strings.xml
+- Welcome journey full message with benefits list
+- Day selection subtitle with expiration notice
+- All dialog texts (Verificación, Registro Requerido, etc.)
+- Challenge duration: 31 days
+- Error messages match exactly
+- Removed Flutter-only UI elements (journey steps, quotes)
+
+⚠️ **REQUIRES VERIFICATION:**
+- Screen layouts visual matching
+- Navigation flow exact matching
+- Animation and transition matching
+- Loading states and progress indicators
+
+❌ **KNOWN DIFFERENCES (Platform-Specific):**
+- iOS requires different permission handling for notifications
+- iOS uses different video player implementation (but same functionality)
+
+---
+
 ## Features
 
 - **User Authentication**: Phone number verification with ManyChat integration

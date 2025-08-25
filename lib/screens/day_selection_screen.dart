@@ -329,8 +329,8 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
 
     if (_selectedSchedule.length > AppConfig.maxPracticeDays) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Máximo 7 días por semana'),
+        SnackBar(
+          content: Text(AppStrings.errorMaxDays),
           backgroundColor: AppColors.error,
         ),
       );

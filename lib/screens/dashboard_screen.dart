@@ -6,7 +6,7 @@ import '../providers/app_state.dart';
 import '../providers/auth_provider.dart';
 import '../utils/constants.dart';
 import '../models/yoga_message.dart';
-import '../widgets/video_player_widget.dart';
+import 'hybrid_video_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -378,7 +378,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: OutlinedButton.icon(
             onPressed: () => _openInstagram(),
             icon: const Icon(Icons.people),
-            label: const Text('Unirse a la Comunidad'),
+            label: Text(AppStrings.joinCommunity),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primary,
               side: BorderSide(color: AppColors.primary),
@@ -403,17 +403,66 @@ class _DashboardScreenState extends State<DashboardScreen> {
     appState.setCurrentStreak(newStreak);
   }
 
+  // Opens hybrid video URL - matches Android MainActivity.openHybridVideoUrl exactly  
   void _openVideo(YogaMessage message) {
     if (message.videoUrl.startsWith('http')) {
+      // Direct URL (like WhatsApp link) - launch externally
       launchUrl(Uri.parse(message.videoUrl));
     } else {
-      // TODO: Open hybrid video system
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => VideoPlayerWidget(
-            videoId: message.videoUrl,
-            title: message.notificationTitle,
+      // Video ID - use hybrid video system just like Android
+      _openHybridVideoUrl(message.videoUrl, message.notificationTitle);
+    }
+  }
+  
+  // Matches Android MainActivity.openHybridVideoUrl exactly
+  void _openHybridVideoUrl(String videoId, String title) async {
+    final appState = Provider.of<AppState>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final phoneNumber = appState.userPhone;
+    
+    if (phoneNumber == null || phoneNumber.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: No se encontró el número de teléfono'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+    
+    try {
+      // Get video token from server - matches Android MessageScheduler.buildHybridVideoUrl
+      final token = await authProvider.getVideoToken(phoneNumber);
+      
+      if (token != null && token.isNotEmpty) {
+        debugPrint('Opening hybrid URL for video: $videoId');
+        
+        // Navigate to hybrid video screen with WebView - matches Android VideoPlayerActivity
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => HybridVideoScreen(
+              videoId: videoId,
+              title: title,
+              phoneNumber: phoneNumber,
+              token: token,
+            ),
           ),
+        );
+      } else {
+        // Fallback: show access error - matches Android
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No se pudo acceder al video. Verifica tu registro.'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error opening hybrid video URL: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error de conexión. Intenta nuevamente.'),
+          backgroundColor: AppColors.error,
         ),
       );
     }

@@ -73,12 +73,12 @@ class AuthProvider extends ChangeNotifier {
     return AppConfig.instagramUrl;
   }
   
-  // Generate video URL with token for secure access
-  Future<String?> getVideoUrlWithToken(String videoId, String userPhone) async {
+  // Generate video token for secure access - matches Android ManyChatIntegration.getVideoToken
+  Future<String?> getVideoToken(String phoneNumber) async {
     try {
-      final encodedPhone = Uri.encodeComponent(userPhone);
+      final encodedPhone = Uri.encodeComponent(phoneNumber);
       final response = await http.get(
-        Uri.parse('${AppConfig.apiBaseUrl}/get-video-token.php?phone=$encodedPhone&video_id=$videoId'),
+        Uri.parse('${AppConfig.apiBaseUrl}/get-video-token.php?phone=$encodedPhone'),
         headers: {
           'Accept': 'application/json',
         },
@@ -86,10 +86,8 @@ class AuthProvider extends ChangeNotifier {
       
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final token = data['token'];
-        if (token != null) {
-          // Return the hybrid video URL with token
-          return '${AppConfig.videoBaseUrl}?token=$token&video_id=$videoId';
+        if (data['success'] == true && data['token'] != null) {
+          return data['token'];
         }
       }
       return null;
@@ -97,6 +95,14 @@ class AuthProvider extends ChangeNotifier {
       debugPrint('Error getting video token: $e');
       return null;
     }
+  }
+  
+  // Build hybrid video URL - matches Android ManyChatIntegration.buildHybridVideoUrl exactly
+  String buildHybridVideoUrl(String videoId, String token, String phoneNumber) {
+    // Encode phone number for URL (replace + with %2B)
+    final encodedPhone = phoneNumber.replaceAll('+', '%2B');
+    // Build hybrid URL: /watch/?video=day1&token=abc&phone=123 → validates → /desafio?o=Za1/
+    return '${AppConfig.videoBaseUrl}?video=$videoId&token=$token&phone=$encodedPhone';
   }
   
   void setLoading(bool loading) {

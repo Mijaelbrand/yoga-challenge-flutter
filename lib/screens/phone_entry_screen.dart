@@ -30,7 +30,7 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Verificación'),
+        title: Text(AppStrings.verificationTitle),
         backgroundColor: AppColors.primary,
         elevation: 0,
       ),
@@ -253,7 +253,7 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text(AppStrings.ok),
           ),
         ],
       ),
@@ -264,21 +264,21 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Registro Requerido'),
+        title: Text(AppStrings.registrationRequiredTitle),
         content: const Text(
           'Tu número de teléfono no está registrado. Pero no te preocupes, hacerlo toma unos segundos solamente: aprieta en registrarse y te llevará a una conversación en Instagram, donde podrás registrarlo en 15 segundos.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
+            child: Text(AppStrings.cancel),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
               _openRegistration();
             },
-            child: const Text('Registrarse'),
+            child: Text(AppStrings.register),
           ),
         ],
       ),
@@ -289,19 +289,19 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Acceso Expirado'),
+        title: Text(AppStrings.accessExpiredTitle),
         content: const Text(AppStrings.accessExpired),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cerrar'),
+            child: Text(AppStrings.close),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
               _openWhatsAppSupport();
             },
-            child: const Text('Contactar Soporte'),
+            child: Text(AppStrings.contactSupport),
           ),
         ],
       ),
