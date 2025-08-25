@@ -23,9 +23,9 @@ void main() {
       );
 
       // Check for welcome screen elements
-      expect(find.text('¡Bienvenido al Desafío de Yoga!'), findsOneWidget);
-      expect(find.text('Transforma tu vida con 31 días de práctica consciente'), findsOneWidget);
-      expect(find.text('Comenzar'), findsOneWidget);
+      expect(find.text('Desafío Akila'), findsOneWidget);
+      expect(find.text('Una práctica transformativa, al alcance de tu mano'), findsOneWidget);
+      expect(find.text('Comienza Tu Viaje'), findsOneWidget);
     });
 
     testWidgets('Phone entry screen should validate input', (WidgetTester tester) async {
@@ -49,8 +49,8 @@ void main() {
       await tester.enterText(phoneField, '123');
       await tester.pump();
 
-      // Find continue button
-      final continueButton = find.text('Continuar');
+      // Find continue button - using button type instead of text
+      final continueButton = find.byType(ElevatedButton).first;
       expect(continueButton, findsOneWidget);
 
       // Tap continue button
@@ -58,7 +58,7 @@ void main() {
       await tester.pump();
 
       // Should show validation error
-      expect(find.text('El número debe tener al menos 10 dígitos'), findsOneWidget);
+      expect(find.text('Por favor ingresa un número válido'), findsOneWidget);
     });
 
     testWidgets('Dashboard should render without errors', (WidgetTester tester) async {
@@ -106,6 +106,7 @@ void main() {
         MultiProvider(
           providers: [
             ChangeNotifierProvider.value(value: appState),
+            ChangeNotifierProvider(create: (_) => AuthProvider()),
           ],
           child: MaterialApp(
             home: const WelcomeScreen(),
@@ -118,12 +119,12 @@ void main() {
 
       // Scroll to make button visible
       await tester.scrollUntilVisible(
-        find.text('Comenzar'),
+        find.text('Comienza Tu Viaje'),
         500.0,
       );
 
       // Tap start button
-      await tester.tap(find.text('Comenzar'));
+      await tester.tap(find.text('Comienza Tu Viaje'));
       await tester.pumpAndSettle();
 
       // Should navigate to phone entry screen
