@@ -12,7 +12,7 @@ class IntroVideoScreen extends StatefulWidget {
 
 class _IntroVideoScreenState extends State<IntroVideoScreen> {
   late WebViewController _webViewController;
-  bool _isLoading = true;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -26,26 +26,22 @@ class _IntroVideoScreenState extends State<IntroVideoScreen> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) {
-            setState(() {
-              _isLoading = true;
-            });
+            // Don't set loading to true - we want video to show immediately
           },
           onPageFinished: (String url) {
-            setState(() {
-              _isLoading = false;
-            });
-            // Hide loading after a short delay to ensure video is ready
-            Future.delayed(const Duration(seconds: 1), () {
-              if (mounted) {
-                setState(() {
-                  _isLoading = false;
-                });
-              }
-            });
+            // Video is ready, ensure loading is false
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+              });
+            }
           },
         ),
       )
       ..loadHtmlString(_getVimeoHtml());
+    
+    // Set initial loading to false so video shows immediately
+    _isLoading = false;
   }
 
   String _getVimeoHtml() {
