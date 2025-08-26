@@ -350,10 +350,13 @@ class AppState extends ChangeNotifier {
         debugPrint('🗓️ Day $day: $dayShort (weekday: $dayOfWeek) - in schedule: ${_selectedSchedule.containsKey(dayShort)}');
         if (_selectedSchedule.containsKey(dayShort)) {
           final timeString = _selectedSchedule[dayShort]!;
+          late final int hour;
+          late final int minute;
+          
           try {
             final timeParts = timeString.split(':');
-            final hour = int.parse(timeParts[0]);
-            final minute = int.parse(timeParts[1]);
+            hour = int.parse(timeParts[0]);
+            minute = int.parse(timeParts[1]);
           } catch (e) {
             debugPrint('💥 TIME PARSING CRASH: timeString="$timeString", error: $e');
             rethrow;
