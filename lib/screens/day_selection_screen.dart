@@ -134,9 +134,15 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
                   onPressed: _selectedSchedule.length >= AppConfig.minPracticeDays
                       ? () {
                           if (!mounted) return;
-                          setState(() {
-                            _debugStatus = "Button pressed!";
-                          });
+                          try {
+                            if (mounted) {
+                              setState(() {
+                                _debugStatus = "Button pressed!";
+                              });
+                            }
+                          } catch (e) {
+                            debugPrint('setState failed on button press: $e');
+                          }
                           _confirmSchedule();
                         }
                       : null,
@@ -333,31 +339,24 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
   }
 
   Future<void> _confirmSchedule() async {
-    // Show confirmation dialog to see if function is reached
-    final shouldContinue = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Debug'),
-        content: Text('Confirmar button was pressed!\nSchedule: $_selectedSchedule\n\nContinue to dashboard?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Continue'),
-          ),
-        ],
-      ),
-    );
+    // Remove debug dialog to prevent context issues
+    debugPrint('🎯 _confirmSchedule called with schedule: $_selectedSchedule');
     
-    if (shouldContinue != true) return;
+    // Add initial delay for safety
+    await Future.delayed(const Duration(milliseconds: 50));
     
     if (!mounted) return;
-    setState(() {
-      _debugStatus = "Validating schedule...";
-    });
+    
+    // Wrap setState in try-catch for safety
+    try {
+      if (mounted) {
+        setState(() {
+          _debugStatus = "Validating schedule...";
+        });
+      }
+    } catch (e) {
+      debugPrint('setState failed at validation start: $e');
+    }
     
     // Check that selected days have times - like Android version
     final selectedDays = _daySelections.entries.where((e) => e.value).map((e) => e.key).toList();
@@ -365,15 +364,24 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     
     if (daysWithoutTime.isNotEmpty) {
       if (!mounted) return;
-      setState(() {
-        _debugStatus = "Missing times error";
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Por favor selecciona una hora para: ${daysWithoutTime.join(", ")}'),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      try {
+        if (mounted) {
+          setState(() {
+            _debugStatus = "Missing times error";
+          });
+        }
+      } catch (e) {
+        debugPrint('setState failed for missing times: $e');
+      }
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Por favor selecciona una hora para: ${daysWithoutTime.join(", ")}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
       return;
     }
 
@@ -405,22 +413,50 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     
     // Generate user messages for the selected schedule  
     if (!mounted) return;
-    setState(() {
-      _debugStatus = "Generating messages...";
-    });
+    
+    // Safer setState with try-catch
+    try {
+      if (mounted) {
+        setState(() {
+          _debugStatus = "Generating messages...";
+        });
+      }
+    } catch (e) {
+      debugPrint('setState failed before message generation: $e');
+    }
     
     try {
+      debugPrint('🔄 Starting generateUserMessages...');
       await appState.generateUserMessages();
+      debugPrint('✅ generateUserMessages completed');
+      
       if (!mounted) return;
-      setState(() {
-        _debugStatus = "Messages generated! Count: ${appState.userScheduledMessages.length}";
-      });
+      
+      // Add small delay after async operation
+      await Future.microtask(() {});
+      
+      if (mounted) {
+        try {
+          setState(() {
+            _debugStatus = "Messages generated! Count: ${appState.userScheduledMessages.length}";
+          });
+        } catch (e) {
+          debugPrint('setState failed after message generation: $e');
+        }
+      }
     } catch (e, stack) {
       debugPrint('❌ _confirmSchedule error: $e\n$stack');
       if (!mounted) return;
-      setState(() {
-        _debugStatus = "Error: $e";
-      });
+      
+      try {
+        if (mounted) {
+          setState(() {
+            _debugStatus = "Error: $e";
+          });
+        }
+      } catch (setStateError) {
+        debugPrint('setState failed in error handler: $setStateError');
+      }
       rethrow; // Let Flutter show the actual crash
     }
     
@@ -428,15 +464,33 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     debugPrint('🔄 About to set screen to dashboard');
     appState.setScreen(AppScreen.dashboard);
     
-    debugPrint('🔄 About to navigate to dashboard');
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const DashboardScreen(),
-      ),
-      (route) => false,
-    );
-    debugPrint('✅ Navigation completed');
+    // Add delay before navigation for safety
+    await Future.delayed(const Duration(milliseconds: 100));
+    
+    if (!mounted) {
+      debugPrint('❌ Widget not mounted before navigation');
+      return;
+    }
+    
+    // Use post-frame callback for safer navigation
+    debugPrint('🔄 Scheduling navigation to dashboard');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        debugPrint('🔄 Executing navigation to dashboard');
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const DashboardScreen(),
+          ),
+          (route) => false,
+        );
+        debugPrint('✅ Navigation completed');
+      } else {
+        debugPrint('❌ Navigation skipped - widget not mounted');
+      }
+    });
   }
 }
+
+
 
 
