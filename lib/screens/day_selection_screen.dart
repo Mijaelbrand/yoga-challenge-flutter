@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_state.dart';
@@ -33,7 +34,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('🎯 DaySelectionScreen build() called');
+    dev.log('🎯 DaySelectionScreen build() called');
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -140,8 +141,10 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
                                 _debugStatus = "Button pressed!";
                               });
                             }
-                          } catch (e) {
-                            debugPrint('setState failed on button press: $e');
+                          } catch (e, stack) {
+                            dev.log('setState failed on button press: $e\n$stack');
+                            Provider.of<AppState>(context, listen: false).setLastError('Button setState: $e');
+                            rethrow; // Show red screen with stack trace
                           }
                           _confirmSchedule();
                         }
@@ -339,8 +342,11 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
   }
 
   Future<void> _confirmSchedule() async {
+    final appState = Provider.of<AppState>(context, listen: false);
+    
     // Remove debug dialog to prevent context issues
-    debugPrint('🎯 _confirmSchedule called with schedule: $_selectedSchedule');
+    dev.log('🎯 _confirmSchedule called with schedule: $_selectedSchedule');
+    appState.setDebugStatus('Starting schedule confirmation...');
     
     // Add initial delay for safety
     await Future.delayed(const Duration(milliseconds: 50));
@@ -353,9 +359,12 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
         setState(() {
           _debugStatus = "Validating schedule...";
         });
+        appState.setDebugStatus('Validating schedule...');
       }
-    } catch (e) {
-      debugPrint('setState failed at validation start: $e');
+    } catch (e, stack) {
+      dev.log('setState failed at validation start: $e\n$stack');
+      appState.setLastError('setState failed at validation: $e');
+      rethrow; // Show red screen with stack trace
     }
     
     // Check that selected days have times - like Android version
@@ -370,8 +379,10 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
             _debugStatus = "Missing times error";
           });
         }
-      } catch (e) {
-        debugPrint('setState failed for missing times: $e');
+      } catch (e, stack) {
+        dev.log('setState failed for missing times: $e\n$stack');
+        appState.setLastError('setState failed for missing times: $e');
+        rethrow; // Show red screen with stack trace
       }
       
       if (mounted) {
@@ -406,7 +417,6 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     }
 
     // Save schedule and navigate to dashboard
-    final appState = Provider.of<AppState>(context, listen: false);
     appState.setSelectedSchedule(_selectedSchedule);
     appState.setChallengeStartDate(DateTime.now());
     appState.setIntroCompleted(true);
@@ -421,14 +431,18 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
           _debugStatus = "Generating messages...";
         });
       }
-    } catch (e) {
-      debugPrint('setState failed before message generation: $e');
+    } catch (e, stack) {
+      dev.log('setState failed before message generation: $e\n$stack');
+      appState.setLastError('setState failed before generation: $e');
+      rethrow; // Show red screen with stack trace
     }
     
     try {
-      debugPrint('🔄 Starting generateUserMessages...');
+      dev.log('🔄 Starting generateUserMessages...');
+      appState.setDebugStatus('Generating messages...');
       await appState.generateUserMessages();
-      debugPrint('✅ generateUserMessages completed');
+      dev.log('✅ generateUserMessages completed');
+      appState.setDebugStatus('Messages generated successfully!');
       
       if (!mounted) return;
       
@@ -440,12 +454,16 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
           setState(() {
             _debugStatus = "Messages generated! Count: ${appState.userScheduledMessages.length}";
           });
-        } catch (e) {
-          debugPrint('setState failed after message generation: $e');
+          appState.setDebugStatus('Messages: ${appState.userScheduledMessages.length}');
+        } catch (e, stack) {
+          dev.log('setState failed after message generation: $e\n$stack');
+          appState.setLastError('setState after generation: $e');
+          rethrow; // Show red screen with stack trace
         }
       }
     } catch (e, stack) {
-      debugPrint('❌ _confirmSchedule error: $e\n$stack');
+      dev.log('❌ _confirmSchedule error: $e\n$stack');
+      appState.setLastError('Message generation failed: $e');
       if (!mounted) return;
       
       try {
@@ -454,38 +472,46 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
             _debugStatus = "Error: $e";
           });
         }
-      } catch (setStateError) {
-        debugPrint('setState failed in error handler: $setStateError');
+      } catch (setStateError, setStateStack) {
+        dev.log('setState failed in error handler: $setStateError\n$setStateStack');
+        appState.setLastError('Error handler setState: $setStateError');
+        rethrow; // Show red screen with stack trace
       }
-      rethrow; // Let Flutter show the actual crash
+      rethrow; // Show red screen with stack trace
     }
     
     // Force dashboard screen state
-    debugPrint('🔄 About to set screen to dashboard');
+    dev.log('🔄 About to set screen to dashboard');
+    appState.setDebugStatus('Setting screen to dashboard...');
     appState.setScreen(AppScreen.dashboard);
     
     // Add delay before navigation for safety
     await Future.delayed(const Duration(milliseconds: 100));
     
     if (!mounted) {
-      debugPrint('❌ Widget not mounted before navigation');
+      dev.log('❌ Widget not mounted before navigation');
+      appState.setLastError('Widget unmounted before navigation');
       return;
     }
     
     // Use post-frame callback for safer navigation
-    debugPrint('🔄 Scheduling navigation to dashboard');
+    dev.log('🔄 Scheduling navigation to dashboard');
+    appState.setDebugStatus('Navigating to dashboard...');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        debugPrint('🔄 Executing navigation to dashboard');
+        dev.log('🔄 Executing navigation to dashboard');
+        appState.setDebugStatus('Navigation executing...');
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) => const DashboardScreen(),
           ),
           (route) => false,
         );
-        debugPrint('✅ Navigation completed');
+        dev.log('✅ Navigation completed');
+        appState.setDebugStatus('Navigation completed!');
       } else {
-        debugPrint('❌ Navigation skipped - widget not mounted');
+        dev.log('❌ Navigation skipped - widget not mounted');
+        appState.setLastError('Navigation failed - widget unmounted');
       }
     });
   }

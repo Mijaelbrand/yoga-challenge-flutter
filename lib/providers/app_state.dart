@@ -35,6 +35,10 @@ class AppState extends ChangeNotifier {
   List<String> _practiceCompletions = [];
   int _remainingAccessDays = 40;
   
+  // Debug overlay
+  String _debugStatus = '';
+  String _lastError = '';
+  
   // Getters
   AppScreen get currentScreen => _currentScreen;
   bool get isLoading => _isLoading;
@@ -49,6 +53,8 @@ class AppState extends ChangeNotifier {
   int get longestStreak => _longestStreak;
   List<String> get practiceCompletions => _practiceCompletions;
   int get remainingAccessDays => _remainingAccessDays;
+  String get debugStatus => _debugStatus;
+  String get lastError => _lastError;
   
   // Check if challenge has expired
   bool get isChallengeExpired {
@@ -122,6 +128,17 @@ class AppState extends ChangeNotifier {
   void setRemainingAccessDays(int days) {
     _remainingAccessDays = days;
     _saveUserData();
+    notifyListeners();
+  }
+  
+  void setDebugStatus(String status) {
+    _debugStatus = status;
+    notifyListeners();
+  }
+  
+  void setLastError(String error) {
+    _lastError = error;
+    _debugStatus = 'ERROR: $error';
     notifyListeners();
   }
   
@@ -423,5 +440,7 @@ class AppState extends ChangeNotifier {
     return dayShorts[weekday];
   }
 }
+
+
 
 
