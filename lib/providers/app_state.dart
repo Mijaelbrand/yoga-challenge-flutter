@@ -321,25 +321,18 @@ class AppState extends ChangeNotifier {
       }
       
       // Load yoga messages from JSON
+      debugPrint('🔄 About to load JSON from assets/data/yoga_messages.json');
       Map<String, dynamic> messagesData;
       try {
         final String jsonString = await rootBundle.loadString('assets/data/yoga_messages.json');
+        debugPrint('🔄 JSON string loaded, length: ${jsonString.length}');
         final Map<String, dynamic> jsonData = json.decode(jsonString);
+        debugPrint('🔄 JSON decoded successfully');
         messagesData = jsonData['messages'];
         debugPrint('✅ JSON loaded successfully: ${messagesData.length} messages');
-      } catch (e) {
-        debugPrint('❌ JSON loading failed: $e');
-        // Create fallback messages if JSON fails to load
-        messagesData = {
-          '1': {
-            'notification_title': 'Yoga Challenge',
-            'notification_text': 'Tu práctica te espera',
-            'full_message': 'Bienvenido a tu desafío de yoga. ¡Comencemos!',
-            'video_url': 'day1',
-            'video_button_text': 'Ver video'
-          }
-        };
-        debugPrint('📝 Using fallback messages');
+      } catch (e, stack) {
+        debugPrint('❌ JSON loading failed: $e\n$stack');
+        rethrow; // Don't use fallback, let it crash to see the real error
       }
       
       // Calculate schedule for 31 days
@@ -357,9 +350,14 @@ class AppState extends ChangeNotifier {
         debugPrint('🗓️ Day $day: $dayShort (weekday: $dayOfWeek) - in schedule: ${_selectedSchedule.containsKey(dayShort)}');
         if (_selectedSchedule.containsKey(dayShort)) {
           final timeString = _selectedSchedule[dayShort]!;
-          final timeParts = timeString.split(':');
-          final hour = int.parse(timeParts[0]);
-          final minute = int.parse(timeParts[1]);
+          try {
+            final timeParts = timeString.split(':');
+            final hour = int.parse(timeParts[0]);
+            final minute = int.parse(timeParts[1]);
+          } catch (e) {
+            debugPrint('💥 TIME PARSING CRASH: timeString="$timeString", error: $e');
+            rethrow;
+          }
           
           final scheduledDateTime = DateTime(
             currentDate.year,
@@ -410,23 +408,9 @@ class AppState extends ChangeNotifier {
       
       debugPrint('✅ Generated ${_userScheduledMessages.length} messages for user schedule');
       
-    } catch (e) {
-      debugPrint('❌ CRITICAL: Error generating user messages: $e');
-      // FORCE a fallback message to prevent grey screen
-      _userScheduledMessages = [
-        YogaMessage(
-          messageNumber: 1,
-          notificationTitle: 'Yoga Challenge - Emergency Mode',
-          notificationText: 'Modo de emergencia activado',
-          fullMessage: 'La aplicación está funcionando en modo de emergencia. Tu desafío de yoga continúa.',
-          videoUrl: 'day1',
-          videoButtonText: 'Ver video',
-          scheduledDate: DateTime.now(),
-        )
-      ];
-      await _saveUserData();
-      notifyListeners();
-      debugPrint('🚑 Emergency fallback message created to prevent grey screen');
+    } catch (e, stack) {
+      debugPrint('❌ CRITICAL: generateUserMessages error: $e\n$stack');
+      rethrow; // Let Flutter show the actual crash instead of hiding it
     }
   }
   

@@ -81,6 +81,7 @@ flutter:
   
   assets:
     - assets/data/
+    - assets/data/yoga_messages.json
     - assets/images/
   
   # Using Google Fonts instead of local font files

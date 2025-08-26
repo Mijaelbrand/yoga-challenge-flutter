@@ -410,21 +410,26 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
       setState(() {
         _debugStatus = "Messages generated! Count: ${appState.userScheduledMessages.length}";
       });
-    } catch (e) {
+    } catch (e, stack) {
+      debugPrint('❌ _confirmSchedule error: $e\n$stack');
       setState(() {
         _debugStatus = "Error: $e";
       });
+      rethrow; // Let Flutter show the actual crash
     }
     
     // Force dashboard screen state
+    debugPrint('🔄 About to set screen to dashboard');
     appState.setScreen(AppScreen.dashboard);
     
+    debugPrint('🔄 About to navigate to dashboard');
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => const DashboardScreen(),
       ),
       (route) => false,
     );
+    debugPrint('✅ Navigation completed');
   }
 }
 
