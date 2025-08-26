@@ -197,19 +197,32 @@ class AppState extends ChangeNotifier {
   
   // Check app state and navigate accordingly
   void checkAppState() {
+    debugPrint('🔍 checkAppState() called');
+    debugPrint('   - Challenge expired: $isChallengeExpired');
+    debugPrint('   - Completed onboarding: $hasCompletedOnboarding');
+    debugPrint('   - User phone: $_userPhone');
+    debugPrint('   - Intro completed: $_introCompleted');
+    debugPrint('   - Schedule empty: ${_selectedSchedule.isEmpty}');
+    
     if (isChallengeExpired) {
+      debugPrint('🎯 Navigation: challengeComplete');
       setScreen(AppScreen.challengeComplete);
     } else if (hasCompletedOnboarding) {
+      debugPrint('🎯 Navigation: dashboard');
       setScreen(AppScreen.dashboard);
     } else if (_userPhone != null && _selectedSchedule.isNotEmpty) {
       if (_introCompleted) {
+        debugPrint('🎯 Navigation: dashboard (intro complete)');
         setScreen(AppScreen.dashboard);
       } else {
+        debugPrint('🎯 Navigation: introVideo');
         setScreen(AppScreen.introVideo);
       }
     } else if (_userPhone != null) {
+      debugPrint('🎯 Navigation: introVideo (phone only)');
       setScreen(AppScreen.introVideo);
     } else {
+      debugPrint('🎯 Navigation: welcome');
       setScreen(AppScreen.welcome);
     }
   }

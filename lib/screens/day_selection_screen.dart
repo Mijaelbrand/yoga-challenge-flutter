@@ -332,6 +332,27 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
   }
 
   Future<void> _confirmSchedule() async {
+    // Show confirmation dialog to see if function is reached
+    final shouldContinue = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Debug'),
+        content: Text('Confirmar button was pressed!\nSchedule: $_selectedSchedule\n\nContinue to dashboard?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
+    
+    if (shouldContinue != true) return;
+    
     setState(() {
       _debugStatus = "Validating schedule...";
     });
