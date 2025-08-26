@@ -32,6 +32,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('🎯 DaySelectionScreen build() called');
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -122,7 +123,10 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: _selectedSchedule.length >= AppConfig.minPracticeDays
-                      ? _confirmSchedule
+                      ? () {
+                          debugPrint('🔴 CONFIRM BUTTON PRESSED! Schedule: $_selectedSchedule');
+                          _confirmSchedule();
+                        }
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
@@ -317,6 +321,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
   }
 
   Future<void> _confirmSchedule() async {
+    debugPrint('🟢 _confirmSchedule() function called');
     // Check that selected days have times - like Android version
     final selectedDays = _daySelections.entries.where((e) => e.value).map((e) => e.key).toList();
     final daysWithoutTime = selectedDays.where((day) => _selectedTimes[day] == null).toList();
