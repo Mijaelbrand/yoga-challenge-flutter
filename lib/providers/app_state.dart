@@ -321,9 +321,26 @@ class AppState extends ChangeNotifier {
       }
       
       // Load yoga messages from JSON
-      final String jsonString = await rootBundle.loadString('assets/data/yoga_messages.json');
-      final Map<String, dynamic> jsonData = json.decode(jsonString);
-      final Map<String, dynamic> messagesData = jsonData['messages'];
+      Map<String, dynamic> messagesData;
+      try {
+        final String jsonString = await rootBundle.loadString('assets/data/yoga_messages.json');
+        final Map<String, dynamic> jsonData = json.decode(jsonString);
+        messagesData = jsonData['messages'];
+        debugPrint('✅ JSON loaded successfully: ${messagesData.length} messages');
+      } catch (e) {
+        debugPrint('❌ JSON loading failed: $e');
+        // Create fallback messages if JSON fails to load
+        messagesData = {
+          '1': {
+            'notification_title': 'Yoga Challenge',
+            'notification_text': 'Tu práctica te espera',
+            'full_message': 'Bienvenido a tu desafío de yoga. ¡Comencemos!',
+            'video_url': 'day1',
+            'video_button_text': 'Ver video'
+          }
+        };
+        debugPrint('📝 Using fallback messages');
+      }
       
       // Calculate schedule for 31 days
       final List<YogaMessage> scheduledMessages = [];
@@ -394,7 +411,22 @@ class AppState extends ChangeNotifier {
       debugPrint('✅ Generated ${_userScheduledMessages.length} messages for user schedule');
       
     } catch (e) {
-      debugPrint('Error generating user messages: $e');
+      debugPrint('❌ CRITICAL: Error generating user messages: $e');
+      // FORCE a fallback message to prevent grey screen
+      _userScheduledMessages = [
+        YogaMessage(
+          messageNumber: 1,
+          notificationTitle: 'Yoga Challenge - Emergency Mode',
+          notificationText: 'Modo de emergencia activado',
+          fullMessage: 'La aplicación está funcionando en modo de emergencia. Tu desafío de yoga continúa.',
+          videoUrl: 'day1',
+          videoButtonText: 'Ver video',
+          scheduledDate: DateTime.now(),
+        )
+      ];
+      await _saveUserData();
+      notifyListeners();
+      debugPrint('🚑 Emergency fallback message created to prevent grey screen');
     }
   }
   
