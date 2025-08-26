@@ -1,9 +1,11 @@
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 import '../providers/app_state.dart';
 import '../providers/auth_provider.dart';
+import '../providers/notification_provider.dart';
 import '../utils/constants.dart';
 import '../models/yoga_message.dart';
 // Removed HybridVideoScreen - daily videos open in external browser like Android
@@ -29,22 +31,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Consumer<AppState>(
-        builder: (context, appState, child) {
-          debugPrint('🏠 Dashboard build called - Messages count: ${appState.userScheduledMessages.length}');
-          debugPrint('🏠 Current screen: ${appState.currentScreen}');
-          debugPrint('🏠 User phone: ${appState.userPhone}');
-          debugPrint('🏠 Intro completed: ${appState.introCompleted}');
+    dev.log('🎯 DashboardScreen.build() STARTED');
+    
+    try {
+      dev.log('🎯 Creating Scaffold wrapper');
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: Consumer<AppState>(
+          builder: (context, appState, child) {
+            dev.log('🎯 Dashboard Consumer.builder() called');
+            dev.log('🎯 Messages count: ${appState.userScheduledMessages.length}');
+            dev.log('🎯 Current screen: ${appState.currentScreen}');
+            dev.log('🎯 User phone: ${appState.userPhone}');
+            dev.log('🎯 Intro completed: ${appState.introCompleted}');
+            
+            appState.setDebugStatus('Dashboard: Consumer builder called');
+            
+            try {
           
           // Safety check - if no messages, show loading or generate them
           if (appState.userScheduledMessages.isEmpty) {
-            debugPrint('📱 Dashboard: No messages found, triggering generation...');
+            dev.log('📱 Dashboard: No messages found, triggering generation...');
+            appState.setDebugStatus('Dashboard: No messages, generating...');
             WidgetsBinding.instance.addPostFrameCallback((_) async {
-              await appState.generateUserMessages();
+              try {
+                dev.log('🔄 PostFrameCallback: Generating user messages');
+                await appState.generateUserMessages();
+                dev.log('✅ PostFrameCallback: Message generation complete');
+              } catch (e, stack) {
+                dev.log('❌ PostFrameCallback: Message generation failed: $e\n$stack');
+                appState.setLastError('Message generation failed: $e');
+              }
             });
+            
+            dev.log('🎯 Returning loading screen');
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -57,11 +78,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
             );
           }
           
-          final todaysMessage = appState.getTodaysMessage();
-          final nextMessage = appState.getNextMessage();
-          final progressPercentage = appState.getProgressPercentage();
+          dev.log('🎯 Messages exist, building main dashboard content');
+          appState.setDebugStatus('Dashboard: Building main content');
           
-          return SingleChildScrollView(
+          try {
+            dev.log('🎯 Getting today\'s message');
+            final todaysMessage = appState.getTodaysMessage();
+            dev.log('🎯 Today\'s message: ${todaysMessage?.notificationTitle ?? "null"}');
+            
+            dev.log('🎯 Getting next message');
+            final nextMessage = appState.getNextMessage();
+            dev.log('🎯 Next message: ${nextMessage?.notificationTitle ?? "null"}');
+            
+            dev.log('🎯 Calculating progress percentage');
+            final progressPercentage = appState.getProgressPercentage();
+            dev.log('🎯 Progress: $progressPercentage%');
+            
+            appState.setDebugStatus('Dashboard: Progress=$progressPercentage%, Today=${todaysMessage?.notificationTitle ?? "null"}');
+            
+            dev.log('🎯 Creating SingleChildScrollView');
+            return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,10 +132,109 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
           );
+          
+          } catch (e, stack) {
+            dev.log('❌ Dashboard main content error: $e\n$stack');
+            appState.setLastError('Dashboard content failed: $e');
+            
+            // Return error screen instead of crashing
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  SizedBox(height: 16),
+                  Text('Error building dashboard', style: TextStyle(fontSize: 18, color: Colors.red)),
+                  SizedBox(height: 8),
+                  Text('$e', textAlign: TextAlign.center, style: TextStyle(fontSize: 12)),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Try to rebuild
+                      if (mounted) setState(() {});
+                    },
+                    child: Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+          
+          } catch (consumerError, consumerStack) {
+            dev.log('❌ Dashboard Consumer error: $consumerError\n$consumerStack');
+            
+            // Return basic error screen
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  SizedBox(height: 16),
+                  Text('Consumer Error', style: TextStyle(fontSize: 18, color: Colors.red)),
+                  Text('$consumerError', textAlign: TextAlign.center, style: TextStyle(fontSize: 12)),
+                ],
+              ),
+            );
+          }
         },
         ),
       ),
     );
+    
+    } catch (buildError, buildStack) {
+      dev.log('❌ CRITICAL: Dashboard build() method failed: $buildError\n$buildStack');
+      
+      // Final fallback error screen
+      return Scaffold(
+        backgroundColor: Colors.red[50],
+        body: Center(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, size: 100, color: Colors.red),
+                SizedBox(height: 20),
+                Text(
+                  'CRITICAL ERROR', 
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.red)
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Dashboard failed to build completely', 
+                  style: TextStyle(fontSize: 16, color: Colors.red[800]),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 12),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red[100],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '$buildError',
+                    style: TextStyle(fontSize: 10, fontFamily: 'monospace'),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  onPressed: () {
+                    // Try to go back or restart
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Text('Go Back', style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildProgressCard(BuildContext context, AppState appState, int progressPercentage) {
@@ -112,7 +247,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Día ${appState.userScheduledMessages.isNotEmpty ? (appState.userScheduledMessages.first.messageNumber) : 1} de 31',
+              'Día ${appState.practiceCompletions.length + 1} de 31',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
@@ -383,6 +518,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
         
         const SizedBox(height: 16),
         
+        // Test Notification Button (DEBUG ONLY)
+        SizedBox(
+          width: double.infinity,
+          height: 48,
+          child: ElevatedButton.icon(
+            onPressed: () => _testNotification(context),
+            icon: const Icon(Icons.notifications),
+            label: const Text('🔔 Probar Notificación (30 seg)'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+            ),
+          ),
+        ),
+        
+        const SizedBox(height: 16),
+        
         // Community Button
         SizedBox(
           width: double.infinity,
@@ -488,6 +643,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
     
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
+    }
+  }
+  
+  void _testNotification(BuildContext context) async {
+    try {
+      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+      await notificationProvider.showTestNotification();
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Notificación de prueba programada para 30 segundos'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al programar notificación: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 }

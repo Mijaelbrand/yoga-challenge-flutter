@@ -1,7 +1,9 @@
 import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_state.dart';
+import '../providers/notification_provider.dart';
 import '../utils/constants.dart';
 import 'dashboard_screen.dart';
 
@@ -444,6 +446,18 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
       dev.log('✅ generateUserMessages completed');
       appState.setDebugStatus('Messages generated successfully!');
       
+      // Schedule notifications for the generated messages
+      try {
+        final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+        await notificationProvider.scheduleUserNotifications(appState.userScheduledMessages);
+        dev.log('✅ Notifications scheduled successfully');
+        appState.setDebugStatus('Notifications scheduled!');
+      } catch (e, stack) {
+        dev.log('❌ Failed to schedule notifications: $e\n$stack');
+        appState.setDebugStatus('Warning: Notifications failed to schedule');
+        // Don't rethrow - continue with app flow even if notifications fail
+      }
+      
       if (!mounted) return;
       
       // Add small delay after async operation
@@ -494,26 +508,117 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
       return;
     }
     
-    // Use post-frame callback for safer navigation
-    dev.log('🔄 Scheduling navigation to dashboard');
-    appState.setDebugStatus('Navigating to dashboard...');
+    // MULTIPLE NAVIGATION APPROACHES FOR TESTING
+    dev.log('🔄 Starting navigation to dashboard');
+    appState.setDebugStatus('Starting navigation methods...');
+    
+    // Approach 1: Post-frame callback (current method)
+    dev.log('🔄 Method 1: Post-frame callback navigation');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        dev.log('🔄 Executing navigation to dashboard');
-        appState.setDebugStatus('Navigation executing...');
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => const DashboardScreen(),
-          ),
-          (route) => false,
-        );
-        dev.log('✅ Navigation completed');
-        appState.setDebugStatus('Navigation completed!');
+        try {
+          dev.log('🔄 PostFrame: Executing navigation to dashboard');
+          appState.setDebugStatus('PostFrame: Navigation executing...');
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => const DashboardScreen(),
+            ),
+            (route) => false,
+          );
+          dev.log('✅ PostFrame: Navigation completed');
+          appState.setDebugStatus('PostFrame: Navigation completed!');
+        } catch (e, stack) {
+          dev.log('❌ PostFrame: Navigation failed: $e\n$stack');
+          appState.setLastError('PostFrame navigation failed: $e');
+          
+          // FALLBACK: Try immediate navigation
+          _attemptImmediateNavigation(appState);
+        }
       } else {
-        dev.log('❌ Navigation skipped - widget not mounted');
-        appState.setLastError('Navigation failed - widget unmounted');
+        dev.log('❌ PostFrame: Widget not mounted');
+        appState.setLastError('PostFrame: Widget unmounted');
+        
+        // FALLBACK: Try scheduler binding
+        _attemptSchedulerNavigation(appState);
       }
     });
+    
+    // Approach 2: Delayed fallback (in case post-frame fails)
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        dev.log('🔄 Method 2: Delayed fallback check');
+        // Check if we're still on this screen (navigation didn't work)
+        if (ModalRoute.of(context)?.settings.name != '/dashboard') {
+          appState.setDebugStatus('Delayed fallback: Attempting direct navigation');
+          _attemptImmediateNavigation(appState);
+        }
+      }
+    });
+    
+    // Approach 3: Scheduler binding fallback (for extreme cases)
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        Future.delayed(const Duration(milliseconds: 100), () {
+          if (mounted && ModalRoute.of(context)?.settings.name != '/dashboard') {
+            dev.log('🔄 Method 3: Scheduler binding fallback');
+            appState.setDebugStatus('Scheduler fallback: Navigation attempt');
+            _attemptImmediateNavigation(appState);
+          }
+        });
+      }
+    });
+  }
+  
+  // Helper method: Immediate navigation attempt
+  void _attemptImmediateNavigation(AppState appState) {
+    if (!mounted) {
+      dev.log('❌ Immediate navigation: Widget not mounted');
+      return;
+    }
+    
+    try {
+      dev.log('🔄 Immediate: Attempting direct navigation');
+      appState.setDebugStatus('Immediate: Direct navigation attempt');
+      
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const DashboardScreen(),
+          settings: const RouteSettings(name: '/dashboard'),
+        ),
+        (route) => false,
+      );
+      
+      dev.log('✅ Immediate: Navigation completed');
+      appState.setDebugStatus('Immediate: Navigation SUCCESS!');
+    } catch (e, stack) {
+      dev.log('❌ Immediate: Navigation failed: $e\n$stack');
+      appState.setLastError('Immediate navigation failed: $e');
+    }
+  }
+  
+  // Helper method: Scheduler binding navigation
+  void _attemptSchedulerNavigation(AppState appState) {
+    dev.log('🔄 Scheduler: Attempting scheduler navigation');
+    appState.setDebugStatus('Scheduler: Navigation attempt');
+    
+    try {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => const DashboardScreen(),
+              settings: const RouteSettings(name: '/dashboard'),
+            ),
+            (route) => false,
+          );
+          dev.log('✅ Scheduler: Navigation completed');
+          appState.setDebugStatus('Scheduler: Navigation SUCCESS!');
+        }
+      });
+    } catch (e, stack) {
+      dev.log('❌ Scheduler: Navigation failed: $e\n$stack');
+      appState.setLastError('Scheduler navigation failed: $e');
+    }
   }
 }
 

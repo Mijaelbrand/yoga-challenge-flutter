@@ -203,13 +203,9 @@ class AppState extends ChangeNotifier {
   
   // Calculate progress percentage
   int getProgressPercentage() {
-    if (_userScheduledMessages.isEmpty) return 0;
-    
-    final now = DateTime.now();
-    final completedMessages = _userScheduledMessages.where((message) => message.scheduledDate.isBefore(now)).length;
-    final totalMessages = _userScheduledMessages.length;
-    
-    return ((completedMessages / totalMessages) * 100).round();
+    // Use practice completions instead of dates for persistence across reinstalls
+    final completedPractices = _practiceCompletions.length;
+    return ((completedPractices / 31.0) * 100).round();
   }
   
   // Check app state and navigate accordingly
@@ -284,10 +280,9 @@ class AppState extends ChangeNotifier {
         _selectedSchedule = {}; // TODO: Implement JSON parsing
       }
       
-      final completionsJson = prefs.getString('practice_completions');
-      if (completionsJson != null) {
-        // Parse completions JSON (simplified for now)
-        _practiceCompletions = []; // TODO: Implement JSON parsing
+      final completionsList = prefs.getStringList('practice_completions');
+      if (completionsList != null) {
+        _practiceCompletions = completionsList;
       }
       
       notifyListeners();
@@ -315,7 +310,10 @@ class AppState extends ChangeNotifier {
         await prefs.setInt('challenge_start_date', _challengeStartDate!.millisecondsSinceEpoch);
       }
       
-      // TODO: Save schedule and completions as JSON
+      // Save practice completions
+      await prefs.setStringList('practice_completions', _practiceCompletions);
+      
+      // TODO: Save schedule as JSON
     } catch (e) {
       debugPrint('Error saving user data: $e');
     }
