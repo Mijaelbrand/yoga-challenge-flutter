@@ -34,6 +34,7 @@ class AppState extends ChangeNotifier {
   int _longestStreak = 0;
   List<String> _practiceCompletions = [];
   int _remainingAccessDays = 40;
+  int _nextMessageNumber = 1; // Track which message number to show next
   
   // Debug overlay
   String _debugStatus = '';
@@ -55,6 +56,7 @@ class AppState extends ChangeNotifier {
   int get remainingAccessDays => _remainingAccessDays;
   String get debugStatus => _debugStatus;
   String get lastError => _lastError;
+  int get nextMessageNumber => _nextMessageNumber;
   
   // Check if challenge has expired
   bool get isChallengeExpired {
@@ -159,6 +161,8 @@ class AppState extends ChangeNotifier {
   void addPracticeCompletion(String date) {
     if (!_practiceCompletions.contains(date)) {
       _practiceCompletions.add(date);
+      // Advance to next message when user completes a practice
+      _nextMessageNumber = _practiceCompletions.length + 1;
       _saveUserData();
       notifyListeners();
     }
@@ -166,6 +170,8 @@ class AppState extends ChangeNotifier {
   
   void removePracticeCompletion(String date) {
     _practiceCompletions.remove(date);
+    // Recalculate next message number based on remaining completions
+    _nextMessageNumber = _practiceCompletions.length + 1;
     _saveUserData();
     notifyListeners();
   }
@@ -174,30 +180,43 @@ class AppState extends ChangeNotifier {
     return _practiceCompletions.contains(date);
   }
   
-  // Get today's message
+  // Get today's message (respects user progress)
   YogaMessage? getTodaysMessage() {
     if (_userScheduledMessages.isEmpty) return null;
+    
+    // Return the next message the user should see based on their progress
+    final availableMessages = _userScheduledMessages.where(
+      (message) => message.messageNumber >= _nextMessageNumber
+    ).toList();
+    
+    if (availableMessages.isEmpty) return null;
     
     final today = DateTime.now();
     final todayStr = "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
     
     try {
-      return _userScheduledMessages.firstWhere(
+      // First, try to find today's scheduled message from available messages
+      final todaysMessage = availableMessages.firstWhere(
         (message) {
           final messageDate = "${message.scheduledDate.year}-${message.scheduledDate.month.toString().padLeft(2, '0')}-${message.scheduledDate.day.toString().padLeft(2, '0')}";
           return messageDate == todayStr;
         },
-        orElse: () => _userScheduledMessages.first,
+        orElse: () => availableMessages.first, // Return next available message
       );
+      
+      return todaysMessage;
     } catch (e) {
-      return null;
+      return availableMessages.isNotEmpty ? availableMessages.first : null;
     }
   }
   
-  // Get next message
+  // Get next message (respects user progress)
   YogaMessage? getNextMessage() {
     final now = DateTime.now();
-    final futureMessages = _userScheduledMessages.where((message) => message.scheduledDate.isAfter(now)).toList();
+    // Only show future messages that the user hasn't completed yet
+    final futureMessages = _userScheduledMessages.where((message) => 
+      message.scheduledDate.isAfter(now) && message.messageNumber >= _nextMessageNumber
+    ).toList();
     return futureMessages.isNotEmpty ? futureMessages.first : null;
   }
   
@@ -252,6 +271,7 @@ class AppState extends ChangeNotifier {
     _longestStreak = 0;
     _practiceCompletions.clear();
     _remainingAccessDays = 40;
+    _nextMessageNumber = 1;
     
     _saveUserData();
     setScreen(AppScreen.welcome);
@@ -268,6 +288,7 @@ class AppState extends ChangeNotifier {
       _currentStreak = prefs.getInt('current_streak') ?? 0;
       _longestStreak = prefs.getInt('longest_streak') ?? 0;
       _remainingAccessDays = prefs.getInt('remaining_access_days') ?? 40;
+      _nextMessageNumber = prefs.getInt('next_message_number') ?? 1;
       
       final startDateMillis = prefs.getInt('challenge_start_date');
       if (startDateMillis != null) {
@@ -276,13 +297,26 @@ class AppState extends ChangeNotifier {
       
       final scheduleJson = prefs.getString('selected_days');
       if (scheduleJson != null) {
-        // Parse schedule JSON (simplified for now)
-        _selectedSchedule = {}; // TODO: Implement JSON parsing
+        try {
+          final Map<String, dynamic> decoded = json.decode(scheduleJson);
+          _selectedSchedule = decoded.map((key, value) => MapEntry(key, value.toString()));
+          debugPrint('✅ Loaded schedule from storage: $_selectedSchedule');
+        } catch (e) {
+          debugPrint('❌ Error parsing schedule JSON: $e');
+          _selectedSchedule = {};
+        }
       }
       
       final completionsList = prefs.getStringList('practice_completions');
       if (completionsList != null) {
         _practiceCompletions = completionsList;
+      }
+      
+      // Ensure nextMessageNumber is correctly calculated based on completions
+      // If we loaded from storage but it doesn't match completions, recalculate
+      if (_nextMessageNumber != _practiceCompletions.length + 1) {
+        _nextMessageNumber = _practiceCompletions.length + 1;
+        debugPrint('🔢 Recalculated next message number: $_nextMessageNumber based on ${_practiceCompletions.length} completions');
       }
       
       notifyListeners();
@@ -305,6 +339,7 @@ class AppState extends ChangeNotifier {
       await prefs.setInt('current_streak', _currentStreak);
       await prefs.setInt('longest_streak', _longestStreak);
       await prefs.setInt('remaining_access_days', _remainingAccessDays);
+      await prefs.setInt('next_message_number', _nextMessageNumber);
       
       if (_challengeStartDate != null) {
         await prefs.setInt('challenge_start_date', _challengeStartDate!.millisecondsSinceEpoch);
@@ -313,7 +348,11 @@ class AppState extends ChangeNotifier {
       // Save practice completions
       await prefs.setStringList('practice_completions', _practiceCompletions);
       
-      // TODO: Save schedule as JSON
+      // Save schedule as JSON
+      if (_selectedSchedule.isNotEmpty) {
+        await prefs.setString('selected_days', json.encode(_selectedSchedule));
+        debugPrint('✅ Saved schedule to storage: $_selectedSchedule');
+      }
     } catch (e) {
       debugPrint('Error saving user data: $e');
     }
@@ -350,11 +389,14 @@ class AppState extends ChangeNotifier {
         rethrow; // Don't use fallback, let it crash to see the real error
       }
       
-      // Calculate schedule for 31 days
+      // Generate FULL schedule for 31 days but preserve user's progress
       final List<YogaMessage> scheduledMessages = [];
       debugPrint('🔍 Messages data keys: ${messagesData.keys.take(5).toList()}');
+      debugPrint('🔢 Next message number: $_nextMessageNumber');
+      debugPrint('📊 Practice completions: ${_practiceCompletions.length}');
+      
       final startDate = _challengeStartDate!;
-      int messageIndex = 1;
+      int messageIndex = 1; // Always generate full sequence
       
       for (int day = 0; day < 31 && messageIndex <= messagesData.length; day++) {
         final currentDate = startDate.add(Duration(days: day));

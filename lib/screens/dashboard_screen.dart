@@ -46,14 +46,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
             dev.log('🎯 User phone: ${appState.userPhone}');
             dev.log('🎯 Intro completed: ${appState.introCompleted}');
             
-            appState.setDebugStatus('Dashboard: Consumer builder called');
+            // Don't call setDebugStatus during build - causes setState during build error
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              appState.setDebugStatus('Dashboard: Consumer builder called');
+            });
             
             try {
           
           // Safety check - if no messages, show loading or generate them
           if (appState.userScheduledMessages.isEmpty) {
             dev.log('📱 Dashboard: No messages found, triggering generation...');
-            appState.setDebugStatus('Dashboard: No messages, generating...');
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              appState.setDebugStatus('Dashboard: No messages, generating...');
+            });
             WidgetsBinding.instance.addPostFrameCallback((_) async {
               try {
                 dev.log('🔄 PostFrameCallback: Generating user messages');
@@ -79,7 +84,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           }
           
           dev.log('🎯 Messages exist, building main dashboard content');
-          appState.setDebugStatus('Dashboard: Building main content');
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            appState.setDebugStatus('Dashboard: Building main content');
+          });
           
           try {
             dev.log('🎯 Getting today\'s message');
@@ -94,7 +101,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             final progressPercentage = appState.getProgressPercentage();
             dev.log('🎯 Progress: $progressPercentage%');
             
-            appState.setDebugStatus('Dashboard: Progress=$progressPercentage%, Today=${todaysMessage?.notificationTitle ?? "null"}');
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              appState.setDebugStatus('Dashboard: Progress=$progressPercentage%, Today=${todaysMessage?.notificationTitle ?? "null"}');
+            });
             
             dev.log('🎯 Creating SingleChildScrollView');
             return SingleChildScrollView(
