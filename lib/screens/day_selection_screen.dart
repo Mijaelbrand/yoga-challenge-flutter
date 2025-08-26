@@ -344,7 +344,15 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     appState.setIntroCompleted(true);
     
     // Generate user messages for the selected schedule
-    await appState.generateUserMessages();
+    try {
+      await appState.generateUserMessages();
+      debugPrint('✅ Messages generated successfully');
+    } catch (e) {
+      debugPrint('❌ Error generating messages: $e');
+    }
+    
+    // Force dashboard screen state
+    appState.setScreen(AppScreen.dashboard);
     
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(

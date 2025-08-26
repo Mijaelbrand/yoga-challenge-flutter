@@ -314,6 +314,7 @@ class AppState extends ChangeNotifier {
       
       // Calculate schedule for 31 days
       final List<YogaMessage> scheduledMessages = [];
+      debugPrint('🔍 Messages data keys: ${messagesData.keys.take(5).toList()}');
       final startDate = _challengeStartDate!;
       int messageIndex = 1;
       
@@ -323,6 +324,7 @@ class AppState extends ChangeNotifier {
         
         // Check if this day is in the user's schedule
         final dayShort = _getDayShortFromWeekday(dayOfWeek);
+        debugPrint('🗓️ Day $day: $dayShort (weekday: $dayOfWeek) - in schedule: ${_selectedSchedule.containsKey(dayShort)}');
         if (_selectedSchedule.containsKey(dayShort)) {
           final timeString = _selectedSchedule[dayShort]!;
           final timeParts = timeString.split(':');
@@ -357,10 +359,26 @@ class AppState extends ChangeNotifier {
       }
       
       _userScheduledMessages = scheduledMessages;
+      
+      // If no messages were generated, create at least one mock message to prevent grey screen
+      if (_userScheduledMessages.isEmpty) {
+        debugPrint('⚠️ No messages generated, creating fallback message');
+        final fallbackMessage = YogaMessage(
+          messageNumber: 1,
+          notificationTitle: 'Yoga Challenge',
+          notificationText: 'Tu práctica te espera',
+          fullMessage: 'Bienvenido a tu desafío de yoga. ¡Comencemos!',
+          videoUrl: 'day1',
+          videoButtonText: 'Ver video',
+          scheduledDate: DateTime.now(),
+        );
+        _userScheduledMessages.add(fallbackMessage);
+      }
+      
       await _saveUserData();
       notifyListeners();
       
-      debugPrint('Generated ${_userScheduledMessages.length} messages for user schedule');
+      debugPrint('✅ Generated ${_userScheduledMessages.length} messages for user schedule');
       
     } catch (e) {
       debugPrint('Error generating user messages: $e');

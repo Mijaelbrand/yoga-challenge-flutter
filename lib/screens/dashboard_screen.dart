@@ -34,6 +34,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: SafeArea(
         child: Consumer<AppState>(
         builder: (context, appState, child) {
+          // Safety check - if no messages, show loading or generate them
+          if (appState.userScheduledMessages.isEmpty) {
+            debugPrint('📱 Dashboard: No messages found, triggering generation...');
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              await appState.generateUserMessages();
+            });
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: AppColors.primary),
+                  SizedBox(height: 16),
+                  Text('Preparando tu desafío...'),
+                ],
+              ),
+            );
+          }
+          
           final todaysMessage = appState.getTodaysMessage();
           final nextMessage = appState.getNextMessage();
           final progressPercentage = appState.getProgressPercentage();
