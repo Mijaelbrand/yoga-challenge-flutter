@@ -133,6 +133,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
                 child: ElevatedButton(
                   onPressed: _selectedSchedule.length >= AppConfig.minPracticeDays
                       ? () {
+                          if (!mounted) return;
                           setState(() {
                             _debugStatus = "Button pressed!";
                           });
@@ -353,6 +354,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     
     if (shouldContinue != true) return;
     
+    if (!mounted) return;
     setState(() {
       _debugStatus = "Validating schedule...";
     });
@@ -362,6 +364,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     final daysWithoutTime = selectedDays.where((day) => _selectedTimes[day] == null).toList();
     
     if (daysWithoutTime.isNotEmpty) {
+      if (!mounted) return;
       setState(() {
         _debugStatus = "Missing times error";
       });
@@ -401,17 +404,20 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     appState.setIntroCompleted(true);
     
     // Generate user messages for the selected schedule  
+    if (!mounted) return;
     setState(() {
       _debugStatus = "Generating messages...";
     });
     
     try {
       await appState.generateUserMessages();
+      if (!mounted) return;
       setState(() {
         _debugStatus = "Messages generated! Count: ${appState.userScheduledMessages.length}";
       });
     } catch (e, stack) {
       debugPrint('❌ _confirmSchedule error: $e\n$stack');
+      if (!mounted) return;
       setState(() {
         _debugStatus = "Error: $e";
       });
