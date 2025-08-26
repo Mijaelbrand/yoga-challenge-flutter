@@ -15,6 +15,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
   final Map<String, String> _selectedSchedule = {};
   final Map<String, bool> _daySelections = {};
   final Map<String, TimeOfDay?> _selectedTimes = {};
+  String _debugStatus = "Ready";
 
   @override
   void initState() {
@@ -36,7 +37,15 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(AppStrings.daySelectionTitle),
+        title: Column(
+          children: [
+            const Text(AppStrings.daySelectionTitle),
+            Text(
+              'Debug: $_debugStatus',
+              style: const TextStyle(fontSize: 12, color: Colors.white70),
+            ),
+          ],
+        ),
         backgroundColor: AppColors.primary,
         elevation: 0,
       ),
@@ -124,7 +133,9 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
                 child: ElevatedButton(
                   onPressed: _selectedSchedule.length >= AppConfig.minPracticeDays
                       ? () {
-                          debugPrint('🔴 CONFIRM BUTTON PRESSED! Schedule: $_selectedSchedule');
+                          setState(() {
+                            _debugStatus = "Button pressed!";
+                          });
                           _confirmSchedule();
                         }
                       : null,
@@ -321,12 +332,18 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
   }
 
   Future<void> _confirmSchedule() async {
-    debugPrint('🟢 _confirmSchedule() function called');
+    setState(() {
+      _debugStatus = "Validating schedule...";
+    });
+    
     // Check that selected days have times - like Android version
     final selectedDays = _daySelections.entries.where((e) => e.value).map((e) => e.key).toList();
     final daysWithoutTime = selectedDays.where((day) => _selectedTimes[day] == null).toList();
     
     if (daysWithoutTime.isNotEmpty) {
+      setState(() {
+        _debugStatus = "Missing times error";
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Por favor selecciona una hora para: ${daysWithoutTime.join(", ")}'),
@@ -362,20 +379,20 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     appState.setChallengeStartDate(DateTime.now());
     appState.setIntroCompleted(true);
     
-    // Generate user messages for the selected schedule
-    debugPrint('🚀 About to generate messages...');
-    debugPrint('📅 Schedule being saved: $_selectedSchedule');
-    debugPrint('📱 App state before generation: ${appState.userScheduledMessages.length} messages');
+    // Generate user messages for the selected schedule  
+    setState(() {
+      _debugStatus = "Generating messages...";
+    });
     
     try {
       await appState.generateUserMessages();
-      debugPrint('✅ Messages generated successfully: ${appState.userScheduledMessages.length} messages');
-      if (appState.userScheduledMessages.isNotEmpty) {
-        debugPrint('📋 First message: ${appState.userScheduledMessages.first.notificationTitle}');
-      }
+      setState(() {
+        _debugStatus = "Messages generated! Count: ${appState.userScheduledMessages.length}";
+      });
     } catch (e) {
-      debugPrint('❌ Error generating messages: $e');
-      debugPrint('📊 Stack trace: ${StackTrace.current}');
+      setState(() {
+        _debugStatus = "Error: $e";
+      });
     }
     
     // Force dashboard screen state

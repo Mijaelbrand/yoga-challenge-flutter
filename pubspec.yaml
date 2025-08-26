@@ -3,7 +3,7 @@ description: A Flutter version of the Yoga Challenge app with ManyChat integrati
 
 publish_to: 'none'
 
-version: 1.1.12+13
+version: 1.1.13+14
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
