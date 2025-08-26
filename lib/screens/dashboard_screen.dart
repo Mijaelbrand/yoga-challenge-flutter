@@ -34,6 +34,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: SafeArea(
         child: Consumer<AppState>(
         builder: (context, appState, child) {
+          debugPrint('🏠 Dashboard build called - Messages count: ${appState.userScheduledMessages.length}');
+          debugPrint('🏠 Current screen: ${appState.currentScreen}');
+          debugPrint('🏠 User phone: ${appState.userPhone}');
+          debugPrint('🏠 Intro completed: ${appState.introCompleted}');
+          
           // Safety check - if no messages, show loading or generate them
           if (appState.userScheduledMessages.isEmpty) {
             debugPrint('📱 Dashboard: No messages found, triggering generation...');

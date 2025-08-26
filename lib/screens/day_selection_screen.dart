@@ -317,6 +317,20 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
   }
 
   Future<void> _confirmSchedule() async {
+    // Check that selected days have times - like Android version
+    final selectedDays = _daySelections.entries.where((e) => e.value).map((e) => e.key).toList();
+    final daysWithoutTime = selectedDays.where((day) => _selectedTimes[day] == null).toList();
+    
+    if (daysWithoutTime.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Por favor selecciona una hora para: ${daysWithoutTime.join(", ")}'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
     if (_selectedSchedule.length < AppConfig.minPracticeDays) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -344,11 +358,19 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     appState.setIntroCompleted(true);
     
     // Generate user messages for the selected schedule
+    debugPrint('🚀 About to generate messages...');
+    debugPrint('📅 Schedule being saved: $_selectedSchedule');
+    debugPrint('📱 App state before generation: ${appState.userScheduledMessages.length} messages');
+    
     try {
       await appState.generateUserMessages();
-      debugPrint('✅ Messages generated successfully');
+      debugPrint('✅ Messages generated successfully: ${appState.userScheduledMessages.length} messages');
+      if (appState.userScheduledMessages.isNotEmpty) {
+        debugPrint('📋 First message: ${appState.userScheduledMessages.first.notificationTitle}');
+      }
     } catch (e) {
       debugPrint('❌ Error generating messages: $e');
+      debugPrint('📊 Stack trace: ${StackTrace.current}');
     }
     
     // Force dashboard screen state
