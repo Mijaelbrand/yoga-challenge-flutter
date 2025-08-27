@@ -50,7 +50,7 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(40),
                     ),
                     child: const Icon(

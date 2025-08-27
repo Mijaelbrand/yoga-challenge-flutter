@@ -183,27 +183,35 @@ class AppState extends ChangeNotifier {
     return _practiceCompletions.contains(date);
   }
   
-  // Get today's message (based on scheduled date, not completion progress)
+  // Get today's message (current active practice - persists until next scheduled day)
   YogaMessage? getTodaysMessage() {
     if (_userScheduledMessages.isEmpty) return null;
     
-    final today = DateTime.now();
-    final todayStr = "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+    final now = DateTime.now();
     
-    try {
-      // Find today's scheduled message regardless of completion progress
-      final todaysMessage = _userScheduledMessages.firstWhere(
-        (message) {
-          final messageDate = "${message.scheduledDate.year}-${message.scheduledDate.month.toString().padLeft(2, '0')}-${message.scheduledDate.day.toString().padLeft(2, '0')}";
-          return messageDate == todayStr;
-        },
-      );
-      
-      return todaysMessage;
-    } catch (e) {
-      // If no message scheduled for today, return null (no practice today)
-      return null;
+    // Find the most recent scheduled message that has already occurred or is today
+    final pastAndTodayMessages = _userScheduledMessages.where(
+      (message) => message.scheduledDate.isBefore(now) || 
+                   _isSameDate(message.scheduledDate, now)
+    ).toList();
+    
+    if (pastAndTodayMessages.isEmpty) {
+      // No messages have occurred yet, show the first upcoming message
+      final sortedMessages = List<YogaMessage>.from(_userScheduledMessages)
+        ..sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
+      return sortedMessages.first;
     }
+    
+    // Sort by date and return the most recent one (this is the "current active" message)
+    pastAndTodayMessages.sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
+    return pastAndTodayMessages.last;
+  }
+  
+  // Helper method to check if two dates are the same day
+  bool _isSameDate(DateTime date1, DateTime date2) {
+    return date1.year == date2.year && 
+           date1.month == date2.month && 
+           date1.day == date2.day;
   }
   
   // Get next message (based on scheduled date, not completion progress)

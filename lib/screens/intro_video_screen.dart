@@ -115,7 +115,7 @@ class _IntroVideoScreenState extends State<IntroVideoScreen> {
                 height: 130,
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.9), // Darker opacity for more contrast
+                  color: Colors.black.withValues(alpha: 0.9), // Darker opacity for more contrast
                   // No border radius - straight lines
                   // No border
                 ),
