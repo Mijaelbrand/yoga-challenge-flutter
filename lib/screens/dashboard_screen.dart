@@ -575,7 +575,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         // Show visible error feedback with more details
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('❌ No token received from server. Check network connection.'),
+            content: Text('❌ Token generation failed. SSL issues resolved. Check logs.'),
             backgroundColor: AppColors.error,
             duration: Duration(seconds: 5),
             action: SnackBarAction(
