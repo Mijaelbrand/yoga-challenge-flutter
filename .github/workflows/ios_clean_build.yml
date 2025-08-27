@@ -31,7 +31,7 @@ jobs:
     
     - name: Verify Fresh Checkout
       run: |
-        echo "=== VERIFYING v1.1.35 FRESH CHECKOUT ==="
+        echo "=== VERIFYING v1.1.36 CLEAN BUILD FRESH CHECKOUT ==="
         echo "Git commit:"
         git log -1 --oneline
         echo ""
@@ -42,7 +42,7 @@ jobs:
         grep "static const String version" lib/utils/build_info.dart || echo "BuildInfo.dart not found"
         echo ""
         echo "Build identifier:"
-        grep "BUILD_1_1_35" lib/utils/build_info.dart || echo "Build identifier not found"
+        grep "BUILD_1_1_36_FLUTTER_SDK_FIX" lib/utils/build_info.dart || echo "Build identifier not found"
         echo ""
         echo "Constants.dart endpoints (MUST be ios- prefixed):"
         grep -E "checkPhoneUrl|getVideoTokenUrl" lib/utils/constants.dart
@@ -156,22 +156,22 @@ jobs:
         cd build/ios/iphoneos
         mkdir -p Payload
         cp -r Runner.app Payload/
-        zip -r YogaChallenge_v1.1.35_clean.ipa Payload
-        echo "✅ IPA created: YogaChallenge_v1.1.35_clean.ipa"
+        zip -r YogaChallenge_v1.1.36_clean.ipa Payload
+        echo "✅ CLEAN BUILD IPA created: YogaChallenge_v1.1.36_clean.ipa"
         ls -la *.ipa
     
     - name: Upload IPA Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ios-clean-build-v1-1-35
-        path: build/ios/iphoneos/YogaChallenge_v1.1.35_clean.ipa
+        name: ios-clean-build-v1-1-36
+        path: build/ios/iphoneos/YogaChallenge_v1.1.36_clean.ipa
         retention-days: 30
     
     - name: Upload Build Logs
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: build-logs-v1-1-35
+        name: build-logs-v1-1-36
         path: |
           build/ios/iphoneos/Runner.app/Info.plist
           flutter_build.log

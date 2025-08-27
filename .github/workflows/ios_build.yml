@@ -25,7 +25,7 @@ jobs:
     
     - name: Verify version and source files
       run: |
-        echo "=== BUILD VERIFICATION v1.1.35 ==="
+        echo "=== REGULAR BUILD VERIFICATION v1.1.36 ==="
         echo "Current version in pubspec.yaml:"
         grep "^version:" pubspec.yaml
         echo ""
