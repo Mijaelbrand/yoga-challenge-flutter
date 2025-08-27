@@ -100,7 +100,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           );
           
-          } catch (e, stack) {
+          } catch (e) {
             appState.setLastError('Dashboard content failed: $e');
             
             // Return error screen instead of crashing
