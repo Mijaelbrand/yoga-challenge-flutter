@@ -482,23 +482,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         
         const SizedBox(height: 16),
         
-        // Community Button
-        SizedBox(
-          width: double.infinity,
-          height: 48,
-          child: OutlinedButton.icon(
-            onPressed: () => _openInstagram(),
-            icon: const Icon(Icons.people),
-            label: Text(AppStrings.joinCommunity),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.primary,
-              side: BorderSide(color: AppColors.primary),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-            ),
-          ),
-        ),
+        // Instagram button removed per user request
       ],
     );
   }
@@ -516,32 +500,40 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   // Opens hybrid video URL - matches Android MainActivity.openHybridVideoUrl exactly  
   void _openVideo(YogaMessage message) {
-    debugPrint('🎬 DEBUG: Opening video - URL: ${message.videoUrl}');
-    debugPrint('🎬 DEBUG: Video title: ${message.notificationTitle}');
+    print('🎬 DEBUG: Opening video - URL: ${message.videoUrl}');
+    print('🎬 DEBUG: Video title: ${message.notificationTitle}');
+    
+    // Show visible feedback that button was clicked
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('🎬 DEBUG: Video button clicked - ${message.videoUrl}'),
+        duration: Duration(seconds: 2),
+      ),
+    );
     
     if (message.videoUrl.startsWith('http')) {
       // Direct URL (like WhatsApp link) - launch externally
-      debugPrint('🎬 DEBUG: Direct URL detected, launching externally');
+      print('🎬 DEBUG: Direct URL detected, launching externally');
       launchUrl(Uri.parse(message.videoUrl));
     } else {
       // Video ID - use hybrid video system just like Android
-      debugPrint('🎬 DEBUG: Video ID detected, using hybrid system');
+      print('🎬 DEBUG: Video ID detected, using hybrid system');
       _openHybridVideoUrl(message.videoUrl, message.notificationTitle);
     }
   }
   
   // Matches Android MainActivity.openHybridVideoUrl exactly
   void _openHybridVideoUrl(String videoId, String title) async {
-    debugPrint('🎬 DEBUG: _openHybridVideoUrl called with videoId: $videoId, title: $title');
+    print('🎬 DEBUG: _openHybridVideoUrl called with videoId: $videoId, title: $title');
     
     final appState = Provider.of<AppState>(context, listen: false);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final phoneNumber = appState.userPhone;
     
-    debugPrint('🎬 DEBUG: User phone number: $phoneNumber');
+    print('🎬 DEBUG: User phone number: $phoneNumber');
     
     if (phoneNumber == null || phoneNumber.isEmpty) {
-      debugPrint('🎬 DEBUG: ❌ No phone number found');
+      print('🎬 DEBUG: ❌ No phone number found');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: No se encontró el número de teléfono'),
@@ -552,23 +544,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
     
     try {
-      debugPrint('🎬 DEBUG: Requesting video token from server...');
+      print('🎬 DEBUG: Requesting video token from server...');
       // Get video token from server - matches Android MessageScheduler.buildHybridVideoUrl
       final token = await authProvider.getVideoToken(phoneNumber);
-      debugPrint('🎬 DEBUG: Token result: $token');
+      print('🎬 DEBUG: Token result: $token');
       
       if (token != null && token.isNotEmpty) {
-        debugPrint('🎬 DEBUG: ✅ Token received, building hybrid URL...');
+        print('🎬 DEBUG: ✅ Token received, building hybrid URL...');
         // Build hybrid URL exactly like Android
         final hybridUrl = authProvider.buildHybridVideoUrl(videoId, token, phoneNumber);
-        debugPrint('🎬 DEBUG: Built hybrid URL: $hybridUrl');
+        print('🎬 DEBUG: Built hybrid URL: $hybridUrl');
         
         // Launch in external browser - matches Android Intent.ACTION_VIEW exactly
-        debugPrint('🎬 DEBUG: Launching URL in external browser...');
+        print('🎬 DEBUG: Launching URL in external browser...');
         await launchUrl(Uri.parse(hybridUrl), mode: LaunchMode.externalApplication);
-        debugPrint('🎬 DEBUG: ✅ URL launched successfully');
+        print('🎬 DEBUG: ✅ URL launched successfully');
       } else {
-        debugPrint('🎬 DEBUG: ❌ Token is null or empty, showing access error');
+        print('🎬 DEBUG: ❌ Token is null or empty, showing access error');
         // Fallback: show access error - matches Android
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -578,7 +570,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         );
       }
     } catch (e) {
-      debugPrint('🎬 DEBUG: ❌ Exception in _openHybridVideoUrl: $e');
+      print('🎬 DEBUG: ❌ Exception in _openHybridVideoUrl: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error de conexión. Intenta nuevamente.'),
@@ -597,14 +589,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  void _openInstagram() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final url = authProvider.getInstagramCommunityLink();
-    
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
-    }
-  }
+  // _openInstagram method removed - Instagram button removed per user request
   
 }
 
