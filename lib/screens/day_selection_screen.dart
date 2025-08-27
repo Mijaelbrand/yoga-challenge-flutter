@@ -244,9 +244,11 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
                         selectedTime != null
                             ? '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}'
                             : AppStrings.selectTime,
+                        textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w500,
+                          height: 0.9,
                         ),
                       ),
                     ],

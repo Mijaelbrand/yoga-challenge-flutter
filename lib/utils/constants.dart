@@ -50,7 +50,7 @@ class AppStrings {
   static const String selectedDays = "Seleccionados: {count} días";
   static const String errorMinDays = "Por favor selecciona al menos 2 días por semana";
   static const String errorMaxDays = "Máximo 7 días por semana";
-  static const String selectTime = "Seleccionar hora";
+  static const String selectTime = "Seleccionar\nhora";
   
   // Dashboard
   static const String dashboardTitle = "Mi Desafío";
