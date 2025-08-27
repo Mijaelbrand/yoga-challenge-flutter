@@ -19,7 +19,7 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.24.0'  # Updated to more recent stable version
+        flutter-version: 'any'  # Use absolute latest Flutter
         channel: 'stable'
         cache: false  # Disable Flutter caching to ensure fresh build
     
@@ -86,7 +86,7 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.24.0'  # Updated to more recent stable version
+        flutter-version: 'any'  # Use absolute latest Flutter
         channel: 'stable'
     
     - name: Install dependencies

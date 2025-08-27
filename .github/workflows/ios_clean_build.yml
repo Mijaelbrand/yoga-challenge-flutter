@@ -62,7 +62,7 @@ jobs:
         # Download specific Flutter version directly (no cache)
         git clone https://github.com/flutter/flutter.git flutter_sdk
         cd flutter_sdk
-        git checkout 3.24.0  # Use specific version to match dependencies
+        # Don't checkout specific version - use latest
         cd ..
         export PATH="$PWD/flutter_sdk/bin:$PATH"
         
@@ -70,7 +70,7 @@ jobs:
         flutter --version
         flutter doctor -v
         
-        echo "Flutter 3.24.0 installed fresh"
+        echo "Latest Flutter installed fresh"
     
     - name: Clean Project Completely
       run: |
