@@ -259,8 +259,10 @@ class AuthProvider extends ChangeNotifier {
       final encodedPhone = phoneNumber.replaceAll('+', '%2B');
       
       // Use dart:developer logging for better iOS visibility
+      developer.log('=== v1.1.31 TOKEN REQUEST DEBUG ===', name: 'VideoToken');
       developer.log('Requesting token for phone: $phoneNumber', name: 'VideoToken');
       developer.log('Encoded phone: $encodedPhone', name: 'VideoToken');
+      developer.log('Using iOS endpoint: ${AppConfig.getVideoTokenUrl}', name: 'VideoToken');
       developer.log('Full URL: ${AppConfig.getVideoTokenUrl}?phone=$encodedPhone', name: 'VideoToken');
       
       final dio = Dio();
@@ -303,8 +305,10 @@ class AuthProvider extends ChangeNotifier {
         developer.log('Parsed data: $data', name: 'VideoToken');
         
         if (data['success'] == true && data['token'] != null) {
-          developer.log('✅ Token received: ${data['token']}', name: 'VideoToken');
-          return data['token'];
+          final token = data['token'];
+          developer.log('✅ v1.1.31 Token received: $token', name: 'VideoToken');
+          developer.log('✅ Token format check: ${token.startsWith('token_') ? 'CORRECT (token_)' : 'INCORRECT (${token.substring(0, 10)}...)'}', name: 'VideoToken');
+          return token;
         } else {
           developer.log('❌ Server returned success=false or null token', name: 'VideoToken');
           developer.log('Success field: ${data['success']}', name: 'VideoToken');

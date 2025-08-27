@@ -544,10 +544,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
     
     try {
-      print('🎬 DEBUG: Requesting video token from server...');
-      // Get video token from server - matches Android MessageScheduler.buildHybridVideoUrl
+      print('🎬 v1.1.31 DEBUG: Requesting video token from server...');
+      // Get video token from server - uses iOS-specific endpoint
       final token = await authProvider.getVideoToken(phoneNumber);
-      print('🎬 DEBUG: Token result: $token');
+      print('🎬 v1.1.31 DEBUG: Token result: $token');
+      print('🎬 v1.1.31 DEBUG: Token format: ${token?.startsWith('token_') == true ? 'CORRECT' : 'INCORRECT - should start with token_'}');
       
       if (token != null && token.isNotEmpty) {
         print('🎬 DEBUG: ✅ Token received, building hybrid URL...');
@@ -609,6 +610,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // _openInstagram method removed - Instagram button removed per user request
   
 }
+
 
 
 
