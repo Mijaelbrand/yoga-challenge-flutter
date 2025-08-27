@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'providers/app_state.dart';
 import 'providers/auth_provider.dart';
@@ -12,6 +13,10 @@ import 'widgets/debug_overlay.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize date formatting for locales
+  await initializeDateFormatting('es', null); // Spanish
+  await initializeDateFormatting('en', null); // English fallback
   
   // Initialize notifications
   await NotificationProvider.initialize();
