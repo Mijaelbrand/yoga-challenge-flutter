@@ -9,7 +9,6 @@ import 'providers/auth_provider.dart';
 import 'providers/notification_provider.dart';
 import 'screens/splash_screen.dart';
 import 'utils/constants.dart';
-import 'widgets/debug_overlay.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,20 +88,7 @@ class YogaChallengeApp extends StatelessWidget {
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
         ),
-        home: Stack(
-          children: [
-            const SplashScreen(),
-            const DebugOverlay(),
-          ],
-        ),
-        builder: (context, child) {
-          return Stack(
-            children: [
-              child ?? const SizedBox(),
-              const DebugOverlay(),
-            ],
-          );
-        },
+        home: const SplashScreen(),
       ),
     );
   }

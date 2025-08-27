@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 // import 'package:timezone/timezone.dart' as tz;
 // import 'package:timezone/data/latest.dart' as tz;
 import '../models/yoga_message.dart';
-import '../utils/constants.dart';
 
 class NotificationProvider extends ChangeNotifier {
   // Stub implementation for APK build without notifications

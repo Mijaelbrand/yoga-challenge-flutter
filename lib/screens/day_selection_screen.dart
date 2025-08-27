@@ -1,4 +1,3 @@
-import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +17,6 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
   final Map<String, String> _selectedSchedule = {};
   final Map<String, bool> _daySelections = {};
   final Map<String, TimeOfDay?> _selectedTimes = {};
-  String _debugStatus = "Ready";
 
   @override
   void initState() {
@@ -36,19 +34,10 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    dev.log('🎯 DaySelectionScreen build() called');
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Column(
-          children: [
-            const Text(AppStrings.daySelectionTitle),
-            Text(
-              'Debug: $_debugStatus',
-              style: const TextStyle(fontSize: 12, color: Colors.white70),
-            ),
-          ],
-        ),
+        title: const Text(AppStrings.daySelectionTitle),
         backgroundColor: AppColors.primary,
         elevation: 0,
       ),
@@ -137,17 +126,6 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
                   onPressed: _selectedSchedule.length >= AppConfig.minPracticeDays
                       ? () {
                           if (!mounted) return;
-                          try {
-                            if (mounted) {
-                              setState(() {
-                                _debugStatus = "Button pressed!";
-                              });
-                            }
-                          } catch (e, stack) {
-                            dev.log('setState failed on button press: $e\n$stack');
-                            Provider.of<AppState>(context, listen: false).setLastError('Button setState: $e');
-                            rethrow; // Show red screen with stack trace
-                          }
                           _confirmSchedule();
                         }
                       : null,
@@ -348,28 +326,12 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
   Future<void> _confirmSchedule() async {
     final appState = Provider.of<AppState>(context, listen: false);
     
-    // Remove debug dialog to prevent context issues
-    dev.log('🎯 _confirmSchedule called with schedule: $_selectedSchedule');
-    appState.setDebugStatus('Starting schedule confirmation...');
     
     // Add initial delay for safety
     await Future.delayed(const Duration(milliseconds: 50));
     
     if (!mounted) return;
     
-    // Wrap setState in try-catch for safety
-    try {
-      if (mounted) {
-        setState(() {
-          _debugStatus = "Validating schedule...";
-        });
-        appState.setDebugStatus('Validating schedule...');
-      }
-    } catch (e, stack) {
-      dev.log('setState failed at validation start: $e\n$stack');
-      appState.setLastError('setState failed at validation: $e');
-      rethrow; // Show red screen with stack trace
-    }
     
     // Check that selected days have times - like Android version
     final selectedDays = _daySelections.entries.where((e) => e.value).map((e) => e.key).toList();
@@ -377,17 +339,6 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     
     if (daysWithoutTime.isNotEmpty) {
       if (!mounted) return;
-      try {
-        if (mounted) {
-          setState(() {
-            _debugStatus = "Missing times error";
-          });
-        }
-      } catch (e, stack) {
-        dev.log('setState failed for missing times: $e\n$stack');
-        appState.setLastError('setState failed for missing times: $e');
-        rethrow; // Show red screen with stack trace
-      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -428,35 +379,15 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
     // Generate user messages for the selected schedule  
     if (!mounted) return;
     
-    // Safer setState with try-catch
-    try {
-      if (mounted) {
-        setState(() {
-          _debugStatus = "Generating messages...";
-        });
-      }
-    } catch (e, stack) {
-      dev.log('setState failed before message generation: $e\n$stack');
-      appState.setLastError('setState failed before generation: $e');
-      rethrow; // Show red screen with stack trace
-    }
     
     try {
-      dev.log('🔄 Starting generateUserMessages...');
-      appState.setDebugStatus('Generating messages...');
       await appState.generateUserMessages();
-      dev.log('✅ generateUserMessages completed');
-      appState.setDebugStatus('Messages generated successfully!');
       
       // Schedule notifications for the generated messages
       try {
         final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
         await notificationProvider.scheduleUserNotifications(appState.userScheduledMessages);
-        dev.log('✅ Notifications scheduled successfully');
-        appState.setDebugStatus('Notifications scheduled!');
-      } catch (e, stack) {
-        dev.log('❌ Failed to schedule notifications: $e\n$stack');
-        appState.setDebugStatus('Warning: Notifications failed to schedule');
+      } catch (e) {
         // Don't rethrow - continue with app flow even if notifications fail
       }
       
@@ -465,79 +396,39 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
       // Add small delay after async operation
       await Future.microtask(() {});
       
-      if (mounted) {
-        try {
-          setState(() {
-            _debugStatus = "Messages generated! Count: ${appState.userScheduledMessages.length}";
-          });
-          appState.setDebugStatus('Messages: ${appState.userScheduledMessages.length}');
-        } catch (e, stack) {
-          dev.log('setState failed after message generation: $e\n$stack');
-          appState.setLastError('setState after generation: $e');
-          rethrow; // Show red screen with stack trace
-        }
-      }
     } catch (e, stack) {
-      dev.log('❌ _confirmSchedule error: $e\n$stack');
       appState.setLastError('Message generation failed: $e');
-      if (!mounted) return;
-      
-      try {
-        if (mounted) {
-          setState(() {
-            _debugStatus = "Error: $e";
-          });
-        }
-      } catch (setStateError, setStateStack) {
-        dev.log('setState failed in error handler: $setStateError\n$setStateStack');
-        appState.setLastError('Error handler setState: $setStateError');
-        rethrow; // Show red screen with stack trace
-      }
       rethrow; // Show red screen with stack trace
     }
     
     // Force dashboard screen state
-    dev.log('🔄 About to set screen to dashboard');
-    appState.setDebugStatus('Setting screen to dashboard...');
     appState.setScreen(AppScreen.dashboard);
     
     // Add delay before navigation for safety
     await Future.delayed(const Duration(milliseconds: 100));
     
     if (!mounted) {
-      dev.log('❌ Widget not mounted before navigation');
       appState.setLastError('Widget unmounted before navigation');
       return;
     }
     
-    // MULTIPLE NAVIGATION APPROACHES FOR TESTING
-    dev.log('🔄 Starting navigation to dashboard');
-    appState.setDebugStatus('Starting navigation methods...');
-    
-    // Approach 1: Post-frame callback (current method)
-    dev.log('🔄 Method 1: Post-frame callback navigation');
+    // Navigation with post-frame callback for safety
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         try {
-          dev.log('🔄 PostFrame: Executing navigation to dashboard');
-          appState.setDebugStatus('PostFrame: Navigation executing...');
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (context) => const DashboardScreen(),
             ),
             (route) => false,
           );
-          dev.log('✅ PostFrame: Navigation completed');
-          appState.setDebugStatus('PostFrame: Navigation completed!');
         } catch (e, stack) {
-          dev.log('❌ PostFrame: Navigation failed: $e\n$stack');
           appState.setLastError('PostFrame navigation failed: $e');
           
           // FALLBACK: Try immediate navigation
           _attemptImmediateNavigation(appState);
         }
       } else {
-        dev.log('❌ PostFrame: Widget not mounted');
         appState.setLastError('PostFrame: Widget unmounted');
         
         // FALLBACK: Try scheduler binding
@@ -545,25 +436,21 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
       }
     });
     
-    // Approach 2: Delayed fallback (in case post-frame fails)
+    // Delayed fallback (in case post-frame fails)
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) {
-        dev.log('🔄 Method 2: Delayed fallback check');
         // Check if we're still on this screen (navigation didn't work)
         if (ModalRoute.of(context)?.settings.name != '/dashboard') {
-          appState.setDebugStatus('Delayed fallback: Attempting direct navigation');
           _attemptImmediateNavigation(appState);
         }
       }
     });
     
-    // Approach 3: Scheduler binding fallback (for extreme cases)
+    // Scheduler binding fallback (for extreme cases)
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         Future.delayed(const Duration(milliseconds: 100), () {
           if (mounted && ModalRoute.of(context)?.settings.name != '/dashboard') {
-            dev.log('🔄 Method 3: Scheduler binding fallback');
-            appState.setDebugStatus('Scheduler fallback: Navigation attempt');
             _attemptImmediateNavigation(appState);
           }
         });
@@ -574,14 +461,10 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
   // Helper method: Immediate navigation attempt
   void _attemptImmediateNavigation(AppState appState) {
     if (!mounted) {
-      dev.log('❌ Immediate navigation: Widget not mounted');
       return;
     }
     
     try {
-      dev.log('🔄 Immediate: Attempting direct navigation');
-      appState.setDebugStatus('Immediate: Direct navigation attempt');
-      
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => const DashboardScreen(),
@@ -589,20 +472,13 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
         ),
         (route) => false,
       );
-      
-      dev.log('✅ Immediate: Navigation completed');
-      appState.setDebugStatus('Immediate: Navigation SUCCESS!');
     } catch (e, stack) {
-      dev.log('❌ Immediate: Navigation failed: $e\n$stack');
       appState.setLastError('Immediate navigation failed: $e');
     }
   }
   
   // Helper method: Scheduler binding navigation
   void _attemptSchedulerNavigation(AppState appState) {
-    dev.log('🔄 Scheduler: Attempting scheduler navigation');
-    appState.setDebugStatus('Scheduler: Navigation attempt');
-    
     try {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
@@ -613,12 +489,9 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
             ),
             (route) => false,
           );
-          dev.log('✅ Scheduler: Navigation completed');
-          appState.setDebugStatus('Scheduler: Navigation SUCCESS!');
         }
       });
     } catch (e, stack) {
-      dev.log('❌ Scheduler: Navigation failed: $e\n$stack');
       appState.setLastError('Scheduler navigation failed: $e');
     }
   }

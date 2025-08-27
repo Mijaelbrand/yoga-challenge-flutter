@@ -1,11 +1,9 @@
-import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 import '../providers/app_state.dart';
 import '../providers/auth_provider.dart';
-import '../providers/notification_provider.dart';
 import '../utils/constants.dart';
 import '../models/yoga_message.dart';
 // Removed HybridVideoScreen - daily videos open in external browser like Android
@@ -31,46 +29,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    dev.log('🎯 DashboardScreen.build() STARTED');
-    
     try {
-      dev.log('🎯 Creating Scaffold wrapper');
       return Scaffold(
         backgroundColor: AppColors.background,
         body: SafeArea(
           child: Consumer<AppState>(
           builder: (context, appState, child) {
-            dev.log('🎯 Dashboard Consumer.builder() called');
-            dev.log('🎯 Messages count: ${appState.userScheduledMessages.length}');
-            dev.log('🎯 Current screen: ${appState.currentScreen}');
-            dev.log('🎯 User phone: ${appState.userPhone}');
-            dev.log('🎯 Intro completed: ${appState.introCompleted}');
-            
-            // Don't call setDebugStatus during build - causes setState during build error
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              appState.setDebugStatus('Dashboard: Consumer builder called');
-            });
             
             try {
           
           // Safety check - if no messages, show loading or generate them
           if (appState.userScheduledMessages.isEmpty) {
-            dev.log('📱 Dashboard: No messages found, triggering generation...');
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              appState.setDebugStatus('Dashboard: No messages, generating...');
-            });
             WidgetsBinding.instance.addPostFrameCallback((_) async {
               try {
-                dev.log('🔄 PostFrameCallback: Generating user messages');
                 await appState.generateUserMessages();
-                dev.log('✅ PostFrameCallback: Message generation complete');
               } catch (e, stack) {
-                dev.log('❌ PostFrameCallback: Message generation failed: $e\n$stack');
                 appState.setLastError('Message generation failed: $e');
               }
             });
             
-            dev.log('🎯 Returning loading screen');
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -83,29 +60,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             );
           }
           
-          dev.log('🎯 Messages exist, building main dashboard content');
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            appState.setDebugStatus('Dashboard: Building main content');
-          });
-          
           try {
-            dev.log('🎯 Getting today\'s message');
             final todaysMessage = appState.getTodaysMessage();
-            dev.log('🎯 Today\'s message: ${todaysMessage?.notificationTitle ?? "null"}');
-            
-            dev.log('🎯 Getting next message');
             final nextMessage = appState.getNextMessage();
-            dev.log('🎯 Next message: ${nextMessage?.notificationTitle ?? "null"}');
-            
-            dev.log('🎯 Calculating progress percentage');
             final progressPercentage = appState.getProgressPercentage();
-            dev.log('🎯 Progress: $progressPercentage%');
-            
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              appState.setDebugStatus('Dashboard: Progress=$progressPercentage%, Today=${todaysMessage?.notificationTitle ?? "null"}');
-            });
-            
-            dev.log('🎯 Creating SingleChildScrollView');
             return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -143,7 +101,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           );
           
           } catch (e, stack) {
-            dev.log('❌ Dashboard main content error: $e\n$stack');
             appState.setLastError('Dashboard content failed: $e');
             
             // Return error screen instead of crashing
@@ -170,7 +127,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           }
           
           } catch (consumerError, consumerStack) {
-            dev.log('❌ Dashboard Consumer error: $consumerError\n$consumerStack');
             
             // Return basic error screen
             return Center(
@@ -191,7 +147,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
     
     } catch (buildError, buildStack) {
-      dev.log('❌ CRITICAL: Dashboard build() method failed: $buildError\n$buildStack');
       
       // Final fallback error screen
       return Scaffold(
