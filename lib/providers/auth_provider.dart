@@ -242,21 +242,53 @@ class AuthProvider extends ChangeNotifier {
   Future<String?> getVideoToken(String phoneNumber) async {
     try {
       final encodedPhone = Uri.encodeComponent(phoneNumber);
+      debugPrint('🔍 DEBUG: Requesting token for phone: $phoneNumber');
+      debugPrint('🔍 DEBUG: Encoded phone: $encodedPhone');
+      debugPrint('🔍 DEBUG: Full URL: ${AppConfig.apiBaseUrl}/get-video-token.php?phone=$encodedPhone');
+      
       final dio = Dio();
       dio.options.connectTimeout = const Duration(seconds: 30);
       dio.options.receiveTimeout = const Duration(seconds: 30);
       
+      // Add headers to match Android exactly
+      dio.options.headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      };
+      
       final response = await dio.get('${AppConfig.apiBaseUrl}/get-video-token.php?phone=$encodedPhone');
       
+      debugPrint('🔍 DEBUG: Response status: ${response.statusCode}');
+      debugPrint('🔍 DEBUG: Response headers: ${response.headers}');
+      debugPrint('🔍 DEBUG: Response data: ${response.data}');
+      
+      // Check ALL response scenarios
       if (response.statusCode == 200) {
         final data = response.data is String ? jsonDecode(response.data) : response.data;
+        debugPrint('🔍 DEBUG: Parsed data: $data');
+        
         if (data['success'] == true && data['token'] != null) {
+          debugPrint('🔍 DEBUG: ✅ Token received: ${data['token']}');
           return data['token'];
+        } else {
+          debugPrint('🔍 DEBUG: ❌ Server returned success=false or null token');
+          debugPrint('🔍 DEBUG: Success field: ${data['success']}');
+          debugPrint('🔍 DEBUG: Token field: ${data['token']}');
+          debugPrint('🔍 DEBUG: Error details: ${data['error'] ?? 'No error message'}');
         }
+      } else {
+        debugPrint('🔍 DEBUG: ❌ HTTP Error: ${response.statusCode}');
+        debugPrint('🔍 DEBUG: HTTP Error message: ${response.statusMessage}');
       }
       return null;
     } catch (e) {
-      debugPrint('Error getting video token: $e');
+      debugPrint('🔍 DEBUG: ❌ Exception caught: $e');
+      if (e is DioException) {
+        debugPrint('🔍 DEBUG: DioException type: ${e.type}');
+        debugPrint('🔍 DEBUG: DioException message: ${e.message}');
+        debugPrint('🔍 DEBUG: DioException response: ${e.response?.data}');
+        debugPrint('🔍 DEBUG: DioException status code: ${e.response?.statusCode}');
+      }
       return null;
     }
   }

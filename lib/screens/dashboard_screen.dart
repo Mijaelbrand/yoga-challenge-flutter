@@ -516,22 +516,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   // Opens hybrid video URL - matches Android MainActivity.openHybridVideoUrl exactly  
   void _openVideo(YogaMessage message) {
+    debugPrint('🎬 DEBUG: Opening video - URL: ${message.videoUrl}');
+    debugPrint('🎬 DEBUG: Video title: ${message.notificationTitle}');
+    
     if (message.videoUrl.startsWith('http')) {
       // Direct URL (like WhatsApp link) - launch externally
+      debugPrint('🎬 DEBUG: Direct URL detected, launching externally');
       launchUrl(Uri.parse(message.videoUrl));
     } else {
       // Video ID - use hybrid video system just like Android
+      debugPrint('🎬 DEBUG: Video ID detected, using hybrid system');
       _openHybridVideoUrl(message.videoUrl, message.notificationTitle);
     }
   }
   
   // Matches Android MainActivity.openHybridVideoUrl exactly
   void _openHybridVideoUrl(String videoId, String title) async {
+    debugPrint('🎬 DEBUG: _openHybridVideoUrl called with videoId: $videoId, title: $title');
+    
     final appState = Provider.of<AppState>(context, listen: false);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final phoneNumber = appState.userPhone;
     
+    debugPrint('🎬 DEBUG: User phone number: $phoneNumber');
+    
     if (phoneNumber == null || phoneNumber.isEmpty) {
+      debugPrint('🎬 DEBUG: ❌ No phone number found');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: No se encontró el número de teléfono'),
@@ -542,17 +552,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
     
     try {
+      debugPrint('🎬 DEBUG: Requesting video token from server...');
       // Get video token from server - matches Android MessageScheduler.buildHybridVideoUrl
       final token = await authProvider.getVideoToken(phoneNumber);
+      debugPrint('🎬 DEBUG: Token result: $token');
       
       if (token != null && token.isNotEmpty) {
+        debugPrint('🎬 DEBUG: ✅ Token received, building hybrid URL...');
         // Build hybrid URL exactly like Android
         final hybridUrl = authProvider.buildHybridVideoUrl(videoId, token, phoneNumber);
-        debugPrint('Opening hybrid URL: $hybridUrl');
+        debugPrint('🎬 DEBUG: Built hybrid URL: $hybridUrl');
         
         // Launch in external browser - matches Android Intent.ACTION_VIEW exactly
+        debugPrint('🎬 DEBUG: Launching URL in external browser...');
         await launchUrl(Uri.parse(hybridUrl), mode: LaunchMode.externalApplication);
+        debugPrint('🎬 DEBUG: ✅ URL launched successfully');
       } else {
+        debugPrint('🎬 DEBUG: ❌ Token is null or empty, showing access error');
         // Fallback: show access error - matches Android
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -562,7 +578,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         );
       }
     } catch (e) {
-      debugPrint('Error opening hybrid video URL: $e');
+      debugPrint('🎬 DEBUG: ❌ Exception in _openHybridVideoUrl: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error de conexión. Intenta nuevamente.'),
