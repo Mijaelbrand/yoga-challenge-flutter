@@ -255,7 +255,8 @@ class AuthProvider extends ChangeNotifier {
   // Generate video token for secure access - matches Android ManyChatIntegration.getVideoToken
   Future<String?> getVideoToken(String phoneNumber) async {
     try {
-      final encodedPhone = Uri.encodeComponent(phoneNumber);
+      // Match Android: only encode + sign, keep everything else as-is
+      final encodedPhone = phoneNumber.replaceAll('+', '%2B');
       
       // Use dart:developer logging for better iOS visibility
       developer.log('Requesting token for phone: $phoneNumber', name: 'VideoToken');

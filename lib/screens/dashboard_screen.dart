@@ -572,12 +572,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       } else {
         print('🎬 DEBUG: ❌ Token is null or empty, showing access error');
         
-        // Show visible error feedback with more details
+        // Show visible error feedback with API details for debugging
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('❌ Token generation failed. SSL issues resolved. Check logs.'),
+            content: Text('❌ Token failed. Phone: $phoneNumber\nAPI: get-video-token.php'),
             backgroundColor: AppColors.error,
-            duration: Duration(seconds: 5),
+            duration: Duration(seconds: 8),
             action: SnackBarAction(
               label: 'Retry',
               textColor: Colors.white,
