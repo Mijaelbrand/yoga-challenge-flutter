@@ -527,26 +527,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         
         const SizedBox(height: 16),
         
-        // Test Notification Button (DEBUG ONLY)
-        SizedBox(
-          width: double.infinity,
-          height: 48,
-          child: ElevatedButton.icon(
-            onPressed: () => _testNotification(context),
-            icon: const Icon(Icons.notifications),
-            label: const Text('🔔 Probar Notificación (30 seg)'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-            ),
-          ),
-        ),
-        
-        const SizedBox(height: 16),
-        
         // Community Button
         SizedBox(
           width: double.infinity,
@@ -655,26 +635,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
   
-  void _testNotification(BuildContext context) async {
-    try {
-      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
-      await notificationProvider.showTestNotification();
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Notificación de prueba programada para 30 segundos'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error al programar notificación: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
 }
 
 
