@@ -23,8 +23,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _loadUserMessages() async {
-    // TODO: Load user's scheduled messages from API or local storage
-    // For now, we'll use placeholder data
+    // Update day progression based on elapsed time (not completions)
+    final appState = Provider.of<AppState>(context, listen: false);
+    appState.updateDayProgressBasedOnTime();
   }
 
   @override
@@ -544,12 +545,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
     
     try {
-      print('🎬 v1.1.32 BUILD CACHE FIX: Requesting video token from server...');
-      print('🎬 v1.1.32 BUILD CACHE FIX: Using iOS-specific endpoint (ios-get-video-token.php)');
+      print('🎬 v1.1.33 COMPLETADA FIX: Requesting video token from server...');
+      print('🎬 v1.1.33 COMPLETADA FIX: Using iOS-specific endpoint (ios-get-video-token.php)');
       // Get video token from server - uses iOS-specific endpoint
       final token = await authProvider.getVideoToken(phoneNumber);
-      print('🎬 v1.1.32 BUILD CACHE FIX: Token result: $token');
-      print('🎬 v1.1.32 BUILD CACHE FIX: Token format: ${token?.startsWith('token_') == true ? 'CORRECT ✅' : 'INCORRECT ❌ - should start with token_ not ios_token_'}');
+      print('🎬 v1.1.33 COMPLETADA FIX: Token result: $token');
+      print('🎬 v1.1.33 COMPLETADA FIX: Token format: ${token?.startsWith('token_') == true ? 'CORRECT ✅' : 'INCORRECT ❌ - should start with token_ not ios_token_'}');
       
       if (token != null && token.isNotEmpty) {
         print('🎬 DEBUG: ✅ Token received, building hybrid URL...');

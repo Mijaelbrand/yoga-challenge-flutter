@@ -161,8 +161,10 @@ class AppState extends ChangeNotifier {
   void addPracticeCompletion(String date) {
     if (!_practiceCompletions.contains(date)) {
       _practiceCompletions.add(date);
-      // Advance to next message when user completes a practice
-      _nextMessageNumber = _practiceCompletions.length + 1;
+      // NOTE: Do NOT advance _nextMessageNumber here!
+      // The next practice should only show when the scheduled day/time arrives,
+      // NOT when user marks current practice as completed.
+      // This only tracks completion for streak calculation.
       _saveUserData();
       notifyListeners();
     }
@@ -170,8 +172,9 @@ class AppState extends ChangeNotifier {
   
   void removePracticeCompletion(String date) {
     _practiceCompletions.remove(date);
-    // Recalculate next message number based on remaining completions
-    _nextMessageNumber = _practiceCompletions.length + 1;
+    // NOTE: Do NOT modify _nextMessageNumber here either!
+    // Practice completions only track streak/completion status,
+    // NOT what practice day the user should see.
     _saveUserData();
     notifyListeners();
   }
@@ -180,43 +183,39 @@ class AppState extends ChangeNotifier {
     return _practiceCompletions.contains(date);
   }
   
-  // Get today's message (respects user progress)
+  // Get today's message (based on scheduled date, not completion progress)
   YogaMessage? getTodaysMessage() {
     if (_userScheduledMessages.isEmpty) return null;
-    
-    // Return the next message the user should see based on their progress
-    final availableMessages = _userScheduledMessages.where(
-      (message) => message.messageNumber >= _nextMessageNumber
-    ).toList();
-    
-    if (availableMessages.isEmpty) return null;
     
     final today = DateTime.now();
     final todayStr = "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
     
     try {
-      // First, try to find today's scheduled message from available messages
-      final todaysMessage = availableMessages.firstWhere(
+      // Find today's scheduled message regardless of completion progress
+      final todaysMessage = _userScheduledMessages.firstWhere(
         (message) {
           final messageDate = "${message.scheduledDate.year}-${message.scheduledDate.month.toString().padLeft(2, '0')}-${message.scheduledDate.day.toString().padLeft(2, '0')}";
           return messageDate == todayStr;
         },
-        orElse: () => availableMessages.first, // Return next available message
       );
       
       return todaysMessage;
     } catch (e) {
-      return availableMessages.isNotEmpty ? availableMessages.first : null;
+      // If no message scheduled for today, return null (no practice today)
+      return null;
     }
   }
   
-  // Get next message (respects user progress)
+  // Get next message (based on scheduled date, not completion progress)
   YogaMessage? getNextMessage() {
     final now = DateTime.now();
-    // Only show future messages that the user hasn't completed yet
+    // Show next scheduled message regardless of completion status
     final futureMessages = _userScheduledMessages.where((message) => 
-      message.scheduledDate.isAfter(now) && message.messageNumber >= _nextMessageNumber
+      message.scheduledDate.isAfter(now)
     ).toList();
+    
+    // Sort by scheduled date and return the earliest one
+    futureMessages.sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
     return futureMessages.isNotEmpty ? futureMessages.first : null;
   }
   
@@ -312,17 +311,37 @@ class AppState extends ChangeNotifier {
         _practiceCompletions = completionsList;
       }
       
-      // Ensure nextMessageNumber is correctly calculated based on completions
-      // If we loaded from storage but it doesn't match completions, recalculate
-      if (_nextMessageNumber != _practiceCompletions.length + 1) {
-        _nextMessageNumber = _practiceCompletions.length + 1;
-        debugPrint('🔢 Recalculated next message number: $_nextMessageNumber based on ${_practiceCompletions.length} completions');
-      }
+      // Calculate _nextMessageNumber based on days elapsed since challenge start,
+      // NOT based on practice completions.
+      _updateNextMessageNumberBasedOnTime();
       
       notifyListeners();
     } catch (e) {
       debugPrint('Error loading user data: $e');
     }
+  }
+  
+  // Update next message number based on time elapsed, not completions
+  void _updateNextMessageNumberBasedOnTime() {
+    if (_challengeStartDate == null) return;
+    
+    final now = DateTime.now();
+    final daysSinceStart = now.difference(_challengeStartDate!).inDays + 1; // +1 because day 1 is the start date
+    
+    // Cap at 31 days maximum (challenge duration)
+    final effectiveDay = daysSinceStart.clamp(1, 31);
+    
+    // Only advance if time has actually passed
+    if (effectiveDay > _nextMessageNumber) {
+      _nextMessageNumber = effectiveDay;
+      debugPrint('🕒 Advanced to day $_nextMessageNumber based on time elapsed ($daysSinceStart days since start)');
+    }
+  }
+  
+  // Public method to update day progress based on time (called from dashboard)
+  void updateDayProgressBasedOnTime() {
+    _updateNextMessageNumberBasedOnTime();
+    notifyListeners();
   }
   
   // Save user data to SharedPreferences
