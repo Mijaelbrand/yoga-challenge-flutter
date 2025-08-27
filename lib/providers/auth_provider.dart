@@ -259,8 +259,8 @@ class AuthProvider extends ChangeNotifier {
       final encodedPhone = phoneNumber.replaceAll('+', '%2B');
       
       // Use dart:developer logging for better iOS visibility
-      developer.log('=== v1.1.33 COMPLETADA FIX + BUILD CACHE DEBUG ===', name: 'VideoToken');
-      developer.log('APP VERSION: v1.1.33 - iOS endpoints + completada behavior fixed', name: 'VideoToken');
+      developer.log('=== v1.1.34 SETSTATE FIX + BUILD CACHE DEBUG ===', name: 'VideoToken');
+      developer.log('APP VERSION: v1.1.34 - setState fix + completada behavior + iOS endpoints', name: 'VideoToken');
       developer.log('Requesting token for phone: $phoneNumber', name: 'VideoToken');
       developer.log('Encoded phone: $encodedPhone', name: 'VideoToken');
       developer.log('Using iOS endpoint: ${AppConfig.getVideoTokenUrl}', name: 'VideoToken');
