@@ -396,7 +396,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
       // Add small delay after async operation
       await Future.microtask(() {});
       
-    } catch (e, stack) {
+    } catch (e) {
       appState.setLastError('Message generation failed: $e');
       rethrow; // Show red screen with stack trace
     }
@@ -422,7 +422,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
             ),
             (route) => false,
           );
-        } catch (e, stack) {
+        } catch (e) {
           appState.setLastError('PostFrame navigation failed: $e');
           
           // FALLBACK: Try immediate navigation
@@ -472,7 +472,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
         ),
         (route) => false,
       );
-    } catch (e, stack) {
+    } catch (e) {
       appState.setLastError('Immediate navigation failed: $e');
     }
   }
@@ -491,7 +491,7 @@ class _DaySelectionScreenState extends State<DaySelectionScreen> {
           );
         }
       });
-    } catch (e, stack) {
+    } catch (e) {
       appState.setLastError('Scheduler navigation failed: $e');
     }
   }

@@ -43,7 +43,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             WidgetsBinding.instance.addPostFrameCallback((_) async {
               try {
                 await appState.generateUserMessages();
-              } catch (e, stack) {
+              } catch (e) {
                 appState.setLastError('Message generation failed: $e');
               }
             });
@@ -126,7 +126,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             );
           }
           
-          } catch (consumerError, consumerStack) {
+          } catch (consumerError) {
             
             // Return basic error screen
             return Center(
@@ -146,7 +146,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
     
-    } catch (buildError, buildStack) {
+    } catch (buildError) {
       
       // Final fallback error screen
       return Scaffold(
