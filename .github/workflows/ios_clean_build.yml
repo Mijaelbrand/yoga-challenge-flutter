@@ -9,18 +9,22 @@ on:
       - 'docs/**'
 
 jobs:
-  clean-build-ios-v1-1-35:
+  clean-build-ios-v1-1-36:
     runs-on: macos-latest
     
     steps:
     - name: Clean Runner Environment
       run: |
         echo "=== CLEANING RUNNER ENVIRONMENT ==="
-        rm -rf ~/Library/Caches/
-        rm -rf ~/.pub-cache/
-        rm -rf ~/Library/Developer/Xcode/DerivedData/
-        rm -rf /tmp/flutter_*
-        echo "Environment cleaned"
+        # Clean only directories we can access without sudo
+        rm -rf ~/.pub-cache/ || echo "pub-cache not found or no permission"
+        rm -rf ~/Library/Developer/Xcode/DerivedData/ || echo "Xcode DerivedData not found or no permission"
+        rm -rf /tmp/flutter_* || echo "No flutter temp files found"
+        # Clean specific cache directories we can access
+        rm -rf ~/Library/Caches/flutter* || echo "No flutter caches found"
+        rm -rf ~/Library/Caches/CocoaPods/ || echo "No CocoaPods caches found"
+        rm -rf ~/Library/Caches/org.carthage.CarthageKit/ || echo "No Carthage caches found"
+        echo "Environment cleaned (accessible directories only)"
     
     - name: Checkout Fresh Code
       uses: actions/checkout@v4
