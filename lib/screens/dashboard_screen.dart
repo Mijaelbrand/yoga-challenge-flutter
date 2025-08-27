@@ -551,6 +551,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
       
       if (token != null && token.isNotEmpty) {
         print('🎬 DEBUG: ✅ Token received, building hybrid URL...');
+        
+        // Show visible success feedback
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('✅ Token received: ${token.substring(0, 8)}... Launching video...'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
+        
         // Build hybrid URL exactly like Android
         final hybridUrl = authProvider.buildHybridVideoUrl(videoId, token, phoneNumber);
         print('🎬 DEBUG: Built hybrid URL: $hybridUrl');
@@ -561,11 +571,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
         print('🎬 DEBUG: ✅ URL launched successfully');
       } else {
         print('🎬 DEBUG: ❌ Token is null or empty, showing access error');
-        // Fallback: show access error - matches Android
+        
+        // Show visible error feedback with more details
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('No se pudo acceder al video. Verifica tu registro.'),
+            content: Text('❌ No token received from server. Check network connection.'),
             backgroundColor: AppColors.error,
+            duration: Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Retry',
+              textColor: Colors.white,
+              onPressed: () => _openHybridVideoUrl(videoId, title),
+            ),
           ),
         );
       }

@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'dart:developer' as developer;
 import '../models/yoga_message.dart';
 import '../utils/constants.dart';
 
@@ -242,52 +244,78 @@ class AuthProvider extends ChangeNotifier {
   Future<String?> getVideoToken(String phoneNumber) async {
     try {
       final encodedPhone = Uri.encodeComponent(phoneNumber);
-      print('🔍 DEBUG: Requesting token for phone: $phoneNumber');
-      print('🔍 DEBUG: Encoded phone: $encodedPhone');
-      print('🔍 DEBUG: Full URL: ${AppConfig.apiBaseUrl}/get-video-token.php?phone=$encodedPhone');
+      
+      // Use dart:developer logging for better iOS visibility
+      developer.log('Requesting token for phone: $phoneNumber', name: 'VideoToken');
+      developer.log('Encoded phone: $encodedPhone', name: 'VideoToken');
+      developer.log('Full URL: ${AppConfig.apiBaseUrl}/get-video-token.php?phone=$encodedPhone', name: 'VideoToken');
       
       final dio = Dio();
-      dio.options.connectTimeout = const Duration(seconds: 30);
-      dio.options.receiveTimeout = const Duration(seconds: 30);
+      
+      // More aggressive timeout for network issues
+      dio.options.connectTimeout = const Duration(seconds: 15);
+      dio.options.receiveTimeout = const Duration(seconds: 15);
+      dio.options.sendTimeout = const Duration(seconds: 15);
       
       // Add headers to match Android exactly
       dio.options.headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'User-Agent': 'YogaChallenge-Flutter/1.0',
       };
       
+      // Handle SSL certificate issues that might cause RSA signature failures
+      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+        final client = HttpClient();
+        client.badCertificateCallback = (cert, host, port) {
+          developer.log('SSL Certificate issue for $host:$port', name: 'VideoToken');
+          return false; // Still reject bad certs, but log it
+        };
+        return client;
+      };
+      
+      developer.log('Making HTTP request...', name: 'VideoToken');
       final response = await dio.get('${AppConfig.apiBaseUrl}/get-video-token.php?phone=$encodedPhone');
       
-      print('🔍 DEBUG: Response status: ${response.statusCode}');
-      print('🔍 DEBUG: Response headers: ${response.headers}');
-      print('🔍 DEBUG: Response data: ${response.data}');
+      developer.log('Response status: ${response.statusCode}', name: 'VideoToken');
+      developer.log('Response headers: ${response.headers}', name: 'VideoToken');
+      developer.log('Response data: ${response.data}', name: 'VideoToken');
       
       // Check ALL response scenarios
       if (response.statusCode == 200) {
         final data = response.data is String ? jsonDecode(response.data) : response.data;
-        print('🔍 DEBUG: Parsed data: $data');
+        developer.log('Parsed data: $data', name: 'VideoToken');
         
         if (data['success'] == true && data['token'] != null) {
-          print('🔍 DEBUG: ✅ Token received: ${data['token']}');
+          developer.log('✅ Token received: ${data['token']}', name: 'VideoToken');
           return data['token'];
         } else {
-          print('🔍 DEBUG: ❌ Server returned success=false or null token');
-          print('🔍 DEBUG: Success field: ${data['success']}');
-          print('🔍 DEBUG: Token field: ${data['token']}');
-          print('🔍 DEBUG: Error details: ${data['error'] ?? 'No error message'}');
+          developer.log('❌ Server returned success=false or null token', name: 'VideoToken');
+          developer.log('Success field: ${data['success']}', name: 'VideoToken');
+          developer.log('Token field: ${data['token']}', name: 'VideoToken');
+          developer.log('Error details: ${data['error'] ?? 'No error message'}', name: 'VideoToken');
         }
       } else {
-        print('🔍 DEBUG: ❌ HTTP Error: ${response.statusCode}');
-        print('🔍 DEBUG: HTTP Error message: ${response.statusMessage}');
+        developer.log('❌ HTTP Error: ${response.statusCode}', name: 'VideoToken');
+        developer.log('HTTP Error message: ${response.statusMessage}', name: 'VideoToken');
       }
       return null;
     } catch (e) {
-      print('🔍 DEBUG: ❌ Exception caught: $e');
+      developer.log('❌ Exception caught: $e', name: 'VideoToken');
       if (e is DioException) {
-        print('🔍 DEBUG: DioException type: ${e.type}');
-        print('🔍 DEBUG: DioException message: ${e.message}');
-        print('🔍 DEBUG: DioException response: ${e.response?.data}');
-        print('🔍 DEBUG: DioException status code: ${e.response?.statusCode}');
+        developer.log('DioException type: ${e.type}', name: 'VideoToken');
+        developer.log('DioException message: ${e.message}', name: 'VideoToken');
+        developer.log('DioException response: ${e.response?.data}', name: 'VideoToken');
+        developer.log('DioException status code: ${e.response?.statusCode}', name: 'VideoToken');
+        
+        // Special handling for SSL/certificate errors that might cause RSA signature failures
+        if (e.type == DioExceptionType.badCertificate) {
+          developer.log('❌ SSL Certificate verification failed - this may relate to RSA signature errors in iOS logs', name: 'VideoToken');
+        } else if (e.type == DioExceptionType.connectionError) {
+          developer.log('❌ Connection error - network or DNS issue', name: 'VideoToken');
+        } else if (e.type == DioExceptionType.connectionTimeout) {
+          developer.log('❌ Connection timeout - server not responding', name: 'VideoToken');
+        }
       }
       return null;
     }
