@@ -109,7 +109,7 @@ class _IntroVideoScreenState extends State<IntroVideoScreen> {
             left: 0,
             right: 0,
             child: Container(
-              height: 130,
+              height: 180, // Increased to accommodate larger button
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: 0.9), // Darker opacity for more contrast
@@ -143,41 +143,45 @@ class _IntroVideoScreenState extends State<IntroVideoScreen> {
                   
                   const SizedBox(height: 12),
                   
-                  // iOS 13.4 compatible button with proper hit testing
-                  GestureDetector(
-                    behavior: HitTestBehavior.translucent, // Better for iOS 13.4
-                    onTap: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => const WelcomeJourneyScreen(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: 200, // Slightly wider for easier tapping
-                      height: 44, // Standard iOS touch target size
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(22),
-                        // Add subtle shadow for better visibility
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.3),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
+                  // iOS 13.4 compatible button - using Material + InkWell for better touch handling
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => const WelcomeJourneyScreen(),
                           ),
-                        ],
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'Ya vi el video, continuar',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        width: 240, // Wider for longer Spanish text
+                        height: 60, // Much taller to prevent text cutoff
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(30),
+                          // Add subtle shadow for better visibility
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        textAlign: TextAlign.center,
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'Ya vi el video, continuar',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            height: 1.2,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),

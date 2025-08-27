@@ -193,7 +193,7 @@ class AuthProvider extends ChangeNotifier {
       );
       
       // Provide more specific error message based on error type
-      String userError = 'NETWORK ERROR v1.1.4:\n';
+      String userError = 'NETWORK ERROR v1.1.41:\n';
       String debugInfo = '';
       
       // Show connectivity test results in error
@@ -260,8 +260,8 @@ class AuthProvider extends ChangeNotifier {
       final encodedPhone = phoneNumber.replaceAll('+', '%2B');
       
       // Use dart:developer logging for better iOS visibility
-      developer.log('=== v1.1.34 SETSTATE FIX + BUILD CACHE DEBUG ===', name: 'VideoToken');
-      developer.log('APP VERSION: v1.1.34 - setState fix + completada behavior + iOS endpoints', name: 'VideoToken');
+      developer.log('=== v1.1.41 SETSTATE FIX + BUILD CACHE DEBUG ===', name: 'VideoToken');
+      developer.log('APP VERSION: v1.1.41 - setState fix + completada behavior + iOS endpoints', name: 'VideoToken');
       developer.log('BUILD IDENTIFIER: ${BuildInfo.getBuildIdentifier()}', name: 'VideoToken');
       developer.log('BUILD INFO VERSION: ${BuildInfo.version}', name: 'VideoToken');
       developer.log('TOKEN PREFIX SHOULD BE: ${BuildInfo.generateTokenPrefix()}', name: 'VideoToken');
@@ -313,7 +313,7 @@ class AuthProvider extends ChangeNotifier {
         
         if (data['success'] == true && data['token'] != null) {
           final token = data['token'];
-          developer.log('✅ v1.1.31 Token received: $token', name: 'VideoToken');
+          developer.log('✅ v1.1.41 Token received: $token', name: 'VideoToken');
           developer.log('✅ Token format check: ${token.startsWith('token_') ? 'CORRECT (token_)' : 'INCORRECT (${token.substring(0, 10)}...)'}', name: 'VideoToken');
           return token;
         } else {
