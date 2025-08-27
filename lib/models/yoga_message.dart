@@ -64,7 +64,6 @@ class YogaMessage {
   int get hashCode => messageNumber.hashCode;
 }
 
-@JsonSerializable()
 class PhoneVerificationResult {
   final bool registered;
   final bool? isAccessExpired;  // Make optional since server doesn't always provide

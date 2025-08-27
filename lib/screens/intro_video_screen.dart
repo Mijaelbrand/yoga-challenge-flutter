@@ -108,75 +108,80 @@ class _IntroVideoScreenState extends State<IntroVideoScreen> {
             top: 50,
             left: 0,
             right: 0,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque, // Ensure touch events are captured
-              onTap: () {}, // Capture taps on the container
-              child: Container(
-                height: 130,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.9), // Darker opacity for more contrast
-                  // No border radius - straight lines
-                  // No border
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Dale play!',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
+            child: Container(
+              height: 130,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.9), // Darker opacity for more contrast
+                // No border radius - straight lines
+                // No border
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Dale play!',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
-                    
-                    const SizedBox(height: 10),
-                    
-                    Text(
-                      'Si todavía no has visto el video de introducción, es importante que lo hagas... dura un minuto, literalmente.',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        height: 1.2,
-                      ),
-                      textAlign: TextAlign.center,
+                    textAlign: TextAlign.center,
+                  ),
+                  
+                  const SizedBox(height: 10),
+                  
+                  Text(
+                    'Si todavía no has visto el video de introducción, es importante que lo hagas... dura un minuto, literalmente.',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      height: 1.2,
                     ),
-                    
-                    const SizedBox(height: 12),
-                    
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => const WelcomeJourneyScreen(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          width: 180,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          alignment: Alignment.center,
-                          child: const Text(
-                            'Ya vi el video, continuar',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                    textAlign: TextAlign.center,
+                  ),
+                  
+                  const SizedBox(height: 12),
+                  
+                  // iOS 13.4 compatible button with proper hit testing
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent, // Better for iOS 13.4
+                    onTap: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const WelcomeJourneyScreen(),
                         ),
+                      );
+                    },
+                    child: Container(
+                      width: 200, // Slightly wider for easier tapping
+                      height: 44, // Standard iOS touch target size
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(22),
+                        // Add subtle shadow for better visibility
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Ya vi el video, continuar',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
