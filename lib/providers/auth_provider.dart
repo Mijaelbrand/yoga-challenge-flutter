@@ -8,6 +8,7 @@ import 'dart:io';
 import 'dart:developer' as developer;
 import '../models/yoga_message.dart';
 import '../utils/constants.dart';
+import '../utils/build_info.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
@@ -261,6 +262,9 @@ class AuthProvider extends ChangeNotifier {
       // Use dart:developer logging for better iOS visibility
       developer.log('=== v1.1.34 SETSTATE FIX + BUILD CACHE DEBUG ===', name: 'VideoToken');
       developer.log('APP VERSION: v1.1.34 - setState fix + completada behavior + iOS endpoints', name: 'VideoToken');
+      developer.log('BUILD IDENTIFIER: ${BuildInfo.getBuildIdentifier()}', name: 'VideoToken');
+      developer.log('BUILD INFO VERSION: ${BuildInfo.version}', name: 'VideoToken');
+      developer.log('TOKEN PREFIX SHOULD BE: ${BuildInfo.generateTokenPrefix()}', name: 'VideoToken');
       developer.log('Requesting token for phone: $phoneNumber', name: 'VideoToken');
       developer.log('Encoded phone: $encodedPhone', name: 'VideoToken');
       developer.log('Using iOS endpoint: ${AppConfig.getVideoTokenUrl}', name: 'VideoToken');
