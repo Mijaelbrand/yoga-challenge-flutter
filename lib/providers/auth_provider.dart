@@ -259,11 +259,14 @@ class AuthProvider extends ChangeNotifier {
       final encodedPhone = phoneNumber.replaceAll('+', '%2B');
       
       // Use dart:developer logging for better iOS visibility
-      developer.log('=== v1.1.31 TOKEN REQUEST DEBUG ===', name: 'VideoToken');
+      developer.log('=== v1.1.32 BUILD CACHE FIX DEBUG ===', name: 'VideoToken');
+      developer.log('APP VERSION: v1.1.32 - iOS-specific endpoints', name: 'VideoToken');
       developer.log('Requesting token for phone: $phoneNumber', name: 'VideoToken');
       developer.log('Encoded phone: $encodedPhone', name: 'VideoToken');
       developer.log('Using iOS endpoint: ${AppConfig.getVideoTokenUrl}', name: 'VideoToken');
+      developer.log('Expected iOS endpoint: https://akilainstitute.com/api/yoga/ios-get-video-token.php', name: 'VideoToken');
       developer.log('Full URL: ${AppConfig.getVideoTokenUrl}?phone=$encodedPhone', name: 'VideoToken');
+      developer.log('Token format expected: token_abc123 (NOT ios_token_abc123)', name: 'VideoToken');
       
       final dio = Dio();
       

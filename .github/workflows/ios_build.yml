@@ -12,20 +12,42 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+      with:
+        clean: true
+        fetch-depth: 0
     
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.19.0'
         channel: 'stable'
+        cache: false  # Disable Flutter caching to ensure fresh build
     
+    - name: Verify version and source files
+      run: |
+        echo "=== BUILD VERIFICATION v1.1.32 ==="
+        echo "Current version in pubspec.yaml:"
+        grep "^version:" pubspec.yaml
+        echo ""
+        echo "Current constants.dart endpoints:"
+        grep -A2 -B2 "checkPhoneUrl\|getVideoTokenUrl" lib/utils/constants.dart
+        echo ""
+        echo "Git commit info:"
+        git log -1 --oneline
+        echo "=== END VERIFICATION ==="
+    
+    - name: Clean all caches and builds
+      run: |
+        flutter clean
+        rm -rf build/
+        rm -rf .dart_tool/
+        rm -rf ios/Pods/
+        rm -rf ios/Podfile.lock
+      
     - name: Install dependencies
       run: flutter pub get
     
-    - name: Clean previous builds
-      run: flutter clean
-      
-    - name: Reinstall dependencies
+    - name: Reinstall dependencies (ensure clean state)
       run: flutter pub get
     
     - name: Generate code

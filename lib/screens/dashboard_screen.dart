@@ -544,11 +544,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
     
     try {
-      print('🎬 v1.1.31 DEBUG: Requesting video token from server...');
+      print('🎬 v1.1.32 BUILD CACHE FIX: Requesting video token from server...');
+      print('🎬 v1.1.32 BUILD CACHE FIX: Using iOS-specific endpoint (ios-get-video-token.php)');
       // Get video token from server - uses iOS-specific endpoint
       final token = await authProvider.getVideoToken(phoneNumber);
-      print('🎬 v1.1.31 DEBUG: Token result: $token');
-      print('🎬 v1.1.31 DEBUG: Token format: ${token?.startsWith('token_') == true ? 'CORRECT' : 'INCORRECT - should start with token_'}');
+      print('🎬 v1.1.32 BUILD CACHE FIX: Token result: $token');
+      print('🎬 v1.1.32 BUILD CACHE FIX: Token format: ${token?.startsWith('token_') == true ? 'CORRECT ✅' : 'INCORRECT ❌ - should start with token_ not ios_token_'}');
       
       if (token != null && token.isNotEmpty) {
         print('🎬 DEBUG: ✅ Token received, building hybrid URL...');
