@@ -98,7 +98,11 @@ class AppStrings {
 class AppConfig {
   static const String apiBaseUrl = "https://akilainstitute.com/api/yoga";
   static const String manyChatWebhookUrl = "https://akilainstitute.com/api/yoga/manychat-webhook.php";
-  static const String checkPhoneUrl = "https://akilainstitute.com/api/yoga/check-phone.php";
+  
+  // iOS-specific endpoints (separate from Android to avoid conflicts)
+  static const String checkPhoneUrl = "https://akilainstitute.com/api/yoga/ios-check-phone.php";
+  static const String getVideoTokenUrl = "https://akilainstitute.com/api/yoga/ios-get-video-token.php";
+  
   static const String videoBaseUrl = "https://akilainstitute.com/watch/video.php";  // Matches Android HYBRID_BASE_URL
   static const String whatsappNumber = "+13202897388";
   static const String instagramUrl = "https://www.instagram.com/akilainstitute/";

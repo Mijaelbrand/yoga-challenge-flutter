@@ -261,7 +261,7 @@ class AuthProvider extends ChangeNotifier {
       // Use dart:developer logging for better iOS visibility
       developer.log('Requesting token for phone: $phoneNumber', name: 'VideoToken');
       developer.log('Encoded phone: $encodedPhone', name: 'VideoToken');
-      developer.log('Full URL: ${AppConfig.apiBaseUrl}/get-video-token.php?phone=$encodedPhone', name: 'VideoToken');
+      developer.log('Full URL: ${AppConfig.getVideoTokenUrl}?phone=$encodedPhone', name: 'VideoToken');
       
       final dio = Dio();
       
@@ -291,7 +291,7 @@ class AuthProvider extends ChangeNotifier {
       };
       
       developer.log('Making HTTP request...', name: 'VideoToken');
-      final response = await dio.get('${AppConfig.apiBaseUrl}/get-video-token.php?phone=$encodedPhone');
+      final response = await dio.get('${AppConfig.getVideoTokenUrl}?phone=$encodedPhone');
       
       developer.log('Response status: ${response.statusCode}', name: 'VideoToken');
       developer.log('Response headers: ${response.headers}', name: 'VideoToken');
@@ -360,6 +360,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
 
 
 
