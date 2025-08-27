@@ -55,15 +55,18 @@ jobs:
     - name: Install Flutter from Scratch
       run: |
         echo "=== INSTALLING FLUTTER FROM SCRATCH ==="
-        # Download Flutter directly (no cache)
-        git clone https://github.com/flutter/flutter.git --branch stable --depth 1 flutter_sdk
+        # Download specific Flutter version directly (no cache)
+        git clone https://github.com/flutter/flutter.git flutter_sdk
+        cd flutter_sdk
+        git checkout 3.24.0  # Use specific version to match dependencies
+        cd ..
         export PATH="$PWD/flutter_sdk/bin:$PATH"
         
         # Verify Flutter installation
         flutter --version
         flutter doctor -v
         
-        echo "Flutter installed fresh"
+        echo "Flutter 3.24.0 installed fresh"
     
     - name: Clean Project Completely
       run: |
