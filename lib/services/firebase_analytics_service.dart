@@ -32,7 +32,7 @@ class FirebaseAnalyticsService {
       // Set user properties with debugging info
       await _analytics!.setUserProperty(
         name: 'app_version',
-        value: '1.1.42_firebase_test',
+        value: '1.1.43_firebase_deploy_fix',
       );
       
       await _analytics!.setUserProperty(

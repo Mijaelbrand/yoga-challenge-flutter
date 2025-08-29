@@ -1,0 +1,10 @@
+{
+  "file_generated_by": "FlutterFire CLI",
+  "purpose": "FirebaseAppId & ProjectId for this Firebase app in this directory",
+  "GOOGLE_APP_ID": "1:453115124098:ios:ee16729f59f408152dd79b",
+  "FIREBASE_PROJECT_ID": "akila-challenge",
+  "GCM_SENDER_ID": "453115124098",
+  "BUNDLE_ID": "com.akila.yogachallenge",
+  "PROJECT_ID": "akila-challenge",
+  "STORAGE_BUCKET": "akila-challenge.firebasestorage.app"
+}
