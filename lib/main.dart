@@ -3,25 +3,57 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'providers/app_state.dart';
 import 'providers/auth_provider.dart';
 import 'providers/notification_provider.dart';
 import 'screens/splash_screen.dart';
 import 'utils/constants.dart';
+import 'services/firebase_analytics_service.dart';
+import 'services/fcm_service.dart';
+import 'services/secure_storage.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize date formatting for locales
-  await initializeDateFormatting('es', null); // Spanish
-  await initializeDateFormatting('en', null); // English fallback
-  
-  // Initialize notifications
-  await NotificationProvider.initialize();
-  
-  // Request notification permissions
-  await Permission.notification.request();
+  try {
+    // Initialize Firebase with platform-specific options
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print('[Main] ✅ Firebase initialized');
+    
+    // Set up background message handler (must be at top level)
+    FirebaseMessaging.onBackgroundMessage(FCMService.handleBackgroundMessage);
+    
+    // Initialize Firebase services
+    await FirebaseAnalyticsService.initialize();
+    await FCMService.initialize();
+    
+    // Initialize secure storage
+    await SecureStorage.instance.initialize();
+    
+    // Initialize date formatting for locales
+    await initializeDateFormatting('es', null); // Spanish
+    await initializeDateFormatting('en', null); // English fallback
+    
+    // Initialize notifications
+    await NotificationProvider.initialize();
+    
+    // Request notification permissions
+    await Permission.notification.request();
+    
+    // Log app launch
+    await FirebaseAnalyticsService.logAppOpen();
+    
+    print('[Main] ✅ All services initialized successfully');
+  } catch (e) {
+    print('[Main] ❌ Error initializing services: $e');
+    // Continue app launch even if some services fail
+  }
   
   runApp(const YogaChallengeApp());
 }

@@ -9,6 +9,8 @@ import 'dart:developer' as developer;
 import '../models/yoga_message.dart';
 import '../utils/constants.dart';
 import '../utils/build_info.dart';
+import '../services/secure_storage.dart';
+import '../services/firebase_analytics_service.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
@@ -134,6 +136,35 @@ class AuthProvider extends ChangeNotifier {
         _verificationResult = PhoneVerificationResult.fromJson(data);
         debugPrint('✅ Parsed result: registered=${_verificationResult!.registered}, days_remaining=${_verificationResult!.daysRemaining}');
         debugPrint('✅ User: ${_verificationResult!.name}, Phone: ${_verificationResult!.phone}');
+        
+        // Log analytics based on verification result
+        if (_verificationResult!.registered && !(_verificationResult!.isAccessExpired ?? false)) {
+          // Successful verification
+          await FirebaseAnalyticsService.logPhoneVerification(
+            success: true,
+            daysRemaining: _verificationResult!.daysRemaining,
+          );
+          
+          // Set user ID for analytics
+          await FirebaseAnalyticsService.setUserId(phone);
+          
+          // Save phone securely
+          await SecureStorage.instance.savePhoneNumber(phone);
+        } else if (!_verificationResult!.registered) {
+          // Phone not registered
+          await FirebaseAnalyticsService.logPhoneVerification(
+            success: false,
+            reason: 'not_registered',
+          );
+        } else if (_verificationResult!.isAccessExpired ?? false) {
+          // Access expired
+          await FirebaseAnalyticsService.logPhoneVerification(
+            success: false,
+            reason: 'access_expired',
+            daysRemaining: _verificationResult!.daysRemaining,
+          );
+        }
+        
         return _verificationResult!;
       } else {
         throw Exception('HTTP ${response.statusCode}: ${response.data}');

@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../providers/app_state.dart';
 import '../providers/auth_provider.dart';
 import '../utils/constants.dart';
+import '../services/firebase_analytics_service.dart';
 import 'intro_video_screen.dart';
 
 class PhoneEntryScreen extends StatefulWidget {
@@ -18,6 +19,13 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
   final _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Log screen view
+    FirebaseAnalyticsService.logScreenView(screenName: 'phone_entry');
+  }
 
   @override
   void dispose() {
@@ -223,9 +231,12 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
         } else if (result.isAccessExpired ?? false) {
           _showAccessExpiredDialog();
         } else {
-          // Success - save phone and continue
-          appState.setUserPhone(_phoneController.text.trim());
+          // Success - save phone securely and continue
+          final phone = _phoneController.text.trim();
+          await appState.setUserPhoneSecure(phone);
           appState.setRemainingAccessDays(result.daysRemaining);
+          
+          // Analytics handled by AuthProvider
           
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(

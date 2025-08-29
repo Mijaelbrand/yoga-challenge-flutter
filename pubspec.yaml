@@ -3,7 +3,7 @@ description: A Flutter version of the Yoga Challenge app with ManyChat integrati
 
 publish_to: 'none'
 
-version: 1.1.41+41
+version: 1.1.42+42
 
 environment:
   sdk: '>=3.2.0 <4.0.0'  # Minimum SDK 3.2.0 to prevent old package versions
@@ -34,9 +34,9 @@ dependencies:
   chewie: ^1.7.4
   webview_flutter: ^4.4.2
   
-  # Notifications (temporarily disabled for APK build)
-  # flutter_local_notifications: ^16.3.0
-  # timezone: ^0.9.2
+  # Notifications
+  flutter_local_notifications: ^17.2.2
+  timezone: ^0.9.2
   
   # Permissions
   permission_handler: ^11.0.1
@@ -58,6 +58,15 @@ dependencies:
   
   # Loading
   flutter_spinkit: ^5.2.0
+  
+  # Security & Encryption
+  crypto: ^3.0.3
+  
+  # Firebase & Analytics
+  firebase_core: ^2.24.2
+  firebase_analytics: ^10.7.4
+  firebase_crashlytics: ^3.4.8
+  firebase_messaging: ^14.7.10
 
 dev_dependencies:
   flutter_test:

@@ -4,6 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/yoga_message.dart';
 import '../utils/constants.dart';
+import '../services/secure_storage.dart';
+import '../services/firebase_analytics_service.dart';
+import '../services/fcm_service.dart';
 
 enum AppScreen {
   splash,
@@ -113,6 +116,17 @@ class AppState extends ChangeNotifier {
   void setSelectedSchedule(Map<String, String> schedule) {
     _selectedSchedule = schedule;
     _saveUserData();
+    
+    // Log schedule selection to Firebase Analytics
+    FirebaseAnalyticsService.logScheduleSelection(
+      daysCount: schedule.length,
+      timesSelected: schedule.values.toList(),
+      selectedDays: schedule.keys.toList(),
+    );
+    
+    // Register with FCM server for notifications
+    _registerWithFCMServer();
+    
     notifyListeners();
   }
   
@@ -505,6 +519,101 @@ class AppState extends ChangeNotifier {
   String _getDayShortFromWeekday(int weekday) {
     const dayShorts = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
     return dayShorts[weekday];
+  }
+  
+  /// Register with FCM server for server-side notifications
+  /// Replaces local notifications with precise Firebase Cloud Messaging
+  Future<void> _registerWithFCMServer() async {
+    try {
+      debugPrint('🔔 [AppState] Starting FCM registration...');
+      
+      // Ensure we have necessary data
+      if (_selectedSchedule.isEmpty) {
+        debugPrint('❌ [AppState] Cannot register FCM: no schedule selected');
+        return;
+      }
+      
+      final phone = await SecureStorage.instance.getPhoneNumber();
+      if (phone == null) {
+        debugPrint('❌ [AppState] Cannot register FCM: no phone number');
+        return;
+      }
+      
+      // Set challenge start date if not set
+      if (_challengeStartDate == null) {
+        _challengeStartDate = DateTime.now();
+        await _saveUserData();
+      }
+      
+      debugPrint('✅ [AppState] FCM registration data ready:');
+      debugPrint('   - Phone: $phone');
+      debugPrint('   - Schedule: $_selectedSchedule');
+      debugPrint('   - Frequency: $_selectedFrequency');
+      debugPrint('   - Start date: $_challengeStartDate');
+      
+      // Register with server
+      final success = await FCMService.registerWithServer();
+      
+      if (success) {
+        debugPrint('✅ [AppState] FCM registration completed successfully');
+        
+        // Update debug status
+        setDebugStatus('FCM registration: SUCCESS');
+        
+        // Show user confirmation
+        // Note: We don't have BuildContext here, so the FCMService handles showing toast
+      } else {
+        debugPrint('❌ [AppState] FCM registration failed');
+        setLastError('FCM registration failed');
+      }
+      
+    } catch (e, stack) {
+      debugPrint('❌ [AppState] FCM registration error: $e');
+      debugPrint('Stack trace: $stack');
+      setLastError('FCM registration error: $e');
+      
+      // Log to Firebase Crashlytics
+      FirebaseAnalyticsService.logError(
+        'FCM registration failed in AppState',
+        e,
+        stack,
+      );
+    }
+  }
+  
+  /// Force sync FCM token if needed (for app resume scenarios)
+  Future<void> forceSyncFCMIfNeeded() async {
+    try {
+      debugPrint('🔄 [AppState] Checking FCM sync status...');
+      
+      if (_selectedSchedule.isNotEmpty && await SecureStorage.instance.getPhoneNumber() != null) {
+        await FCMService.forceSyncIfNeeded();
+        debugPrint('✅ [AppState] FCM sync check completed');
+      } else {
+        debugPrint('ℹ️ [AppState] Skipping FCM sync - incomplete user data');
+      }
+    } catch (e) {
+      debugPrint('❌ [AppState] FCM sync check error: $e');
+    }
+  }
+  
+  /// Update user phone using secure storage
+  Future<void> setUserPhoneSecure(String phone) async {
+    try {
+      // Save to secure storage instead of regular preferences
+      await SecureStorage.instance.savePhoneNumber(phone);
+      
+      // Update local state for compatibility
+      _userPhone = phone;
+      await _saveUserData();
+      notifyListeners();
+      
+      debugPrint('✅ [AppState] Phone number saved securely');
+    } catch (e) {
+      debugPrint('❌ [AppState] Error saving phone securely: $e');
+      // Fallback to regular storage
+      setUserPhone(phone);
+    }
   }
 }
 
