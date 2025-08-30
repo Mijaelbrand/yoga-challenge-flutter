@@ -3,7 +3,7 @@ description: A Flutter version of the Yoga Challenge app with ManyChat integrati
 
 publish_to: 'none'
 
-version: 1.1.45+45
+version: 1.1.46+46
 
 environment:
   sdk: '>=3.2.0 <4.0.0'  # Minimum SDK 3.2.0 to prevent old package versions
@@ -50,8 +50,8 @@ dependencies:
   # JSON
   json_annotation: ^4.8.1
   
-  # Background Tasks
-  workmanager: ^0.5.2
+  # Background Tasks (removed - using Firebase FCM instead)
+  # workmanager: ^0.5.2
   
   # Connectivity
   connectivity_plus: ^5.0.2
