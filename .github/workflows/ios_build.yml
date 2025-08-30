@@ -80,15 +80,16 @@ jobs:
         cd ..
         # Build iOS simulator app (no code signing required, debug mode for simulator)
         echo "Building for iOS Simulator - no code signing needed"
-        # List available simulators first
-        xcrun simctl list devices available | grep iPhone || echo "No iPhone simulators found"
-        # Try building with explicit device ID from the list above
+        # Show available destinations from xcodebuild (not simctl)
         cd ios
+        echo "Available destinations from xcodebuild:"
+        xcodebuild -workspace Runner.xcworkspace -scheme Runner -showdestinations | grep "iOS Simulator" | head -5
+        # Use generic iOS Simulator destination (should work with any available simulator)
         xcodebuild -workspace Runner.xcworkspace \
           -scheme Runner \
           -configuration Debug \
           -sdk iphonesimulator \
-          -destination 'platform=iOS Simulator,id=BB113DCC-3130-46D7-BDF5-4EFA1573219A' \
+          -destination 'generic/platform=iOS Simulator' \
           build
         cd ..
     
