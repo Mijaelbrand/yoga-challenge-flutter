@@ -80,13 +80,23 @@ jobs:
         cd ..
         # Build iOS simulator app (no code signing required, debug mode for simulator)
         echo "Building for iOS Simulator - no code signing needed"
-        flutter build ios --simulator --debug --build-name=1.1.46 --build-number=46
+        # List available simulators first
+        xcrun simctl list devices available | grep iPhone || echo "No iPhone simulators found"
+        # Try building with explicit destination
+        cd ios
+        xcodebuild -workspace Runner.xcworkspace \
+          -scheme Runner \
+          -configuration Debug \
+          -sdk iphonesimulator \
+          -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' \
+          build
+        cd ..
     
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: ios-simulator-build
-        path: build/ios/iphonesimulator/Runner.app
+        path: ios/build/Debug-iphonesimulator/Runner.app
         retention-days: 30
 
   test:
