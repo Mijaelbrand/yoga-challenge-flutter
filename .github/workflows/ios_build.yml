@@ -78,21 +78,34 @@ jobs:
         cd ios
         xcrun xcodebuild -project Runner.xcodeproj -target Runner -configuration Release IPHONEOS_DEPLOYMENT_TARGET=13.0 -showBuildSettings | grep IPHONEOS_DEPLOYMENT_TARGET || true
         cd ..
-        # Configure Xcode for unsigned build
-        cd ios
-        # Set code signing to manual and disable automatic signing
-        sed -i '' 's/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = "";/' Runner.xcodeproj/project.pbxproj
-        sed -i '' 's/CODE_SIGN_STYLE = .*/CODE_SIGN_STYLE = Manual;/' Runner.xcodeproj/project.pbxproj
-        sed -i '' 's/CODE_SIGN_IDENTITY = .*/CODE_SIGN_IDENTITY = "";/' Runner.xcodeproj/project.pbxproj
-        cd ..
-        # Build iOS app for device without code signing
-        flutter build ios --release --no-codesign --build-name=1.1.46 --build-number=46
+        # Build using xcodebuild directly with unsigned settings
+        flutter build ios --release --no-codesign --build-name=1.1.46 --build-number=46 --export-options-plist=ios/ExportOptions.plist || true
+        
+        # If Flutter build fails, try direct xcodebuild approach
+        if [ ! -d "build/ios/iphoneos/Runner.app" ]; then
+          echo "Flutter build failed, trying direct xcodebuild..."
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath build/Runner.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            DEVELOPMENT_TEAM="" \
+            archive
+          cd ..
+        fi
     
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: ios-build
-        path: build/ios/iphoneos/Runner.app
+        path: |
+          build/ios/iphoneos/Runner.app
+          ios/build/Runner.xcarchive
         retention-days: 30
 
   test:
