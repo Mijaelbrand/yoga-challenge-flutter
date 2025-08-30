@@ -82,13 +82,13 @@ jobs:
         echo "Building for iOS Simulator - no code signing needed"
         # List available simulators first
         xcrun simctl list devices available | grep iPhone || echo "No iPhone simulators found"
-        # Try building with explicit destination
+        # Try building with explicit destination using available iPhone SE
         cd ios
         xcodebuild -workspace Runner.xcworkspace \
           -scheme Runner \
           -configuration Debug \
           -sdk iphonesimulator \
-          -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' \
+          -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation)' \
           build
         cd ..
     
