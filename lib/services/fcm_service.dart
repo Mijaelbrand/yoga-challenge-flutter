@@ -4,7 +4,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../utils/build_info.dart';
-import 'firebase_analytics_service.dart';
+import 'firebase_analytics_service_stub.dart';
 import 'secure_storage.dart';
 
 /**

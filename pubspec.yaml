@@ -62,11 +62,11 @@ dependencies:
   # Security & Encryption
   crypto: ^3.0.3
   
-  # Firebase & Analytics (temporarily commented for simulator build)
-  # firebase_core: ^2.24.2
-  # firebase_analytics: ^10.7.4
-  # firebase_crashlytics: ^3.4.8
-  # firebase_messaging: ^14.7.10
+  # Firebase & Analytics
+  firebase_core: ^2.24.2
+  # firebase_analytics: ^10.7.4  # Analytics disabled for simulator
+  # firebase_crashlytics: ^3.4.8  # Crashlytics disabled for simulator
+  firebase_messaging: ^14.7.10  # Keep FCM for notifications
 
 dev_dependencies:
   flutter_test:
