@@ -2,7 +2,7 @@ name: iOS Build
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop, simulator-build ]
   pull_request:
     branches: [ main ]
 
@@ -25,7 +25,7 @@ jobs:
     
     - name: Verify version and source files
       run: |
-        echo "=== REGULAR BUILD VERIFICATION v1.1.36 ==="
+        echo "=== SIMULATOR BUILD VERIFICATION v1.1.46 ==="
         echo "Current version in pubspec.yaml:"
         grep "^version:" pubspec.yaml
         echo ""
@@ -78,34 +78,15 @@ jobs:
         cd ios
         xcrun xcodebuild -project Runner.xcodeproj -target Runner -configuration Release IPHONEOS_DEPLOYMENT_TARGET=13.0 -showBuildSettings | grep IPHONEOS_DEPLOYMENT_TARGET || true
         cd ..
-        # Build using xcodebuild directly with unsigned settings
-        flutter build ios --release --no-codesign --build-name=1.1.46 --build-number=46 --export-options-plist=ios/ExportOptions.plist || true
-        
-        # If Flutter build fails, try direct xcodebuild approach
-        if [ ! -d "build/ios/iphoneos/Runner.app" ]; then
-          echo "Flutter build failed, trying direct xcodebuild..."
-          cd ios
-          xcodebuild -workspace Runner.xcworkspace \
-            -scheme Runner \
-            -configuration Release \
-            -destination 'generic/platform=iOS' \
-            -archivePath build/Runner.xcarchive \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
-            PROVISIONING_PROFILE_SPECIFIER="" \
-            DEVELOPMENT_TEAM="" \
-            archive
-          cd ..
-        fi
+        # Build iOS simulator app (no code signing required)
+        echo "Building for iOS Simulator - no code signing needed"
+        flutter build ios --simulator --release --build-name=1.1.46 --build-number=46
     
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ios-build
-        path: |
-          build/ios/iphoneos/Runner.app
-          ios/build/Runner.xcarchive
+        name: ios-simulator-build
+        path: build/ios/iphonesimulator/Runner.app
         retention-days: 30
 
   test:
