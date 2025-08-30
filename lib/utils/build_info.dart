@@ -2,13 +2,13 @@
 // This file helps track which version is actually compiled into the app
 
 class BuildInfo {
-  static const String version = 'v1.1.43';
+  static const String version = 'v1.1.44';
   static const String buildDate = '2025-08-29';
   static const String tokenEndpoint = 'ios-get-video-token.php';
   
   // Diagnostic method to generate unique build identifier
   static String getBuildIdentifier() {
-    return 'BUILD_1_1_43_FIREBASE_DEPLOYMENT_FIX';
+    return 'BUILD_1_1_44_UNSIGNED_BUILD_FIX';
   }
   
   // Method to generate token with correct format
