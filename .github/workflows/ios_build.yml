@@ -78,7 +78,14 @@ jobs:
         cd ios
         xcrun xcodebuild -project Runner.xcodeproj -target Runner -configuration Release IPHONEOS_DEPLOYMENT_TARGET=13.0 -showBuildSettings | grep IPHONEOS_DEPLOYMENT_TARGET || true
         cd ..
-        # Build iOS app
+        # Configure Xcode for unsigned build
+        cd ios
+        # Set code signing to manual and disable automatic signing
+        sed -i '' 's/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = "";/' Runner.xcodeproj/project.pbxproj
+        sed -i '' 's/CODE_SIGN_STYLE = .*/CODE_SIGN_STYLE = Manual;/' Runner.xcodeproj/project.pbxproj
+        sed -i '' 's/CODE_SIGN_IDENTITY = .*/CODE_SIGN_IDENTITY = "";/' Runner.xcodeproj/project.pbxproj
+        cd ..
+        # Build iOS app for device without code signing
         flutter build ios --release --no-codesign --build-name=1.1.46 --build-number=46
     
     - name: Upload build artifacts
