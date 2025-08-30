@@ -78,9 +78,9 @@ jobs:
         cd ios
         xcrun xcodebuild -project Runner.xcodeproj -target Runner -configuration Release IPHONEOS_DEPLOYMENT_TARGET=13.0 -showBuildSettings | grep IPHONEOS_DEPLOYMENT_TARGET || true
         cd ..
-        # Build iOS simulator app (no code signing required)
+        # Build iOS simulator app (no code signing required, debug mode for simulator)
         echo "Building for iOS Simulator - no code signing needed"
-        flutter build ios --simulator --release --build-name=1.1.46 --build-number=46
+        flutter build ios --simulator --debug --build-name=1.1.46 --build-number=46
     
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
