@@ -68,7 +68,18 @@ jobs:
         cd ..
     
     - name: Build iOS
-      run: flutter build ios --release --no-codesign
+      run: |
+        # Force iOS 13.0 deployment target and use available SDK
+        export IPHONEOS_DEPLOYMENT_TARGET=13.0
+        # List available SDKs for debugging
+        echo "Available iOS SDKs:"
+        xcrun xcodebuild -showsdks | grep iphoneos || echo "No iOS SDKs found"
+        # Set Xcode deployment target before build
+        cd ios
+        xcrun xcodebuild -project Runner.xcodeproj -target Runner -configuration Release IPHONEOS_DEPLOYMENT_TARGET=13.0 -showBuildSettings | grep IPHONEOS_DEPLOYMENT_TARGET || true
+        cd ..
+        # Build iOS app
+        flutter build ios --release --no-codesign --build-name=1.1.46 --build-number=46
     
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
