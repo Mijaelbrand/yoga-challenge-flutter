@@ -3,24 +3,26 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// Temporarily commented for simulator build
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'providers/app_state.dart';
 import 'providers/auth_provider.dart';
 import 'providers/notification_provider.dart';
 import 'screens/splash_screen.dart';
 import 'utils/constants.dart';
-import 'services/firebase_analytics_service.dart';
-import 'services/fcm_service.dart';
+// import 'services/firebase_analytics_service.dart';
+// import 'services/fcm_service.dart';
 import 'services/secure_storage.dart';
-import 'firebase_options.dart';
+// import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   try {
-    // Initialize Firebase with platform-specific options
+    // Initialize Firebase with platform-specific options (temporarily commented for simulator build)
+    /*
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
@@ -32,6 +34,7 @@ void main() async {
     // Initialize Firebase services
     await FirebaseAnalyticsService.initialize();
     await FCMService.initialize();
+    */
     
     // Initialize secure storage
     await SecureStorage.instance.initialize();
@@ -46,8 +49,8 @@ void main() async {
     // Request notification permissions
     await Permission.notification.request();
     
-    // Log app launch
-    await FirebaseAnalyticsService.logAppOpen();
+    // Log app launch (temporarily commented for simulator build)
+    // await FirebaseAnalyticsService.logAppOpen();
     
     print('[Main] ✅ All services initialized successfully');
   } catch (e) {

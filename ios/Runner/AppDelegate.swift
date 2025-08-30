@@ -1,6 +1,6 @@
 import Flutter
 import UIKit
-import Firebase
+// import Firebase  // Temporarily commented for simulator build
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -8,10 +8,11 @@ import Firebase
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    // Configure Firebase
-    FirebaseApp.configure()
+    // Configure Firebase (temporarily commented for simulator build)
+    // FirebaseApp.configure()
     
-    // Request notification permissions
+    // Request notification permissions (temporarily commented for simulator build)
+    /*
     if #available(iOS 10.0, *) {
       UNUserNotificationCenter.current().delegate = self
       let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
@@ -26,6 +27,7 @@ import Firebase
     }
     
     application.registerForRemoteNotifications()
+    */
     
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
