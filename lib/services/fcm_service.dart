@@ -69,12 +69,11 @@ class FCMService {
         print('[FCMService] 🧪 Server endpoint: $_serverBaseUrl');
         
         // Log to Firebase Analytics for verification
-        await FirebaseAnalyticsService.logEvent(
-          name: 'fcm_token_generated',
-          parameters: {
+        await FirebaseAnalyticsService.logFCMNotification(
+          action: 'token_generated',
+          additionalParams: {
             'token_length': token.length,
             'test_platform': 'browserstack_ios',
-            'timestamp': DateTime.now().millisecondsSinceEpoch,
           },
         );
       } else {
